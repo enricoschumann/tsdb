@@ -1,0 +1,15 @@
+Package: tsdb
+Type: Package
+Title: Terribly-Simple Data Base for Time Series
+Version: 0.3-1
+Date: 2017-01-04
+Maintainer: Enrico Schumann <es@enricoschumann.net>
+Authors@R: person("Enrico", "Schumann",
+                  role  = c("aut", "cre"),
+                  email = "es@enricoschumann.net")
+Description: A terribly-simple data base for time series. All
+  series are saved as csv files. The package offers utilities for
+  saving files in a standardised format, and for retrieving and
+  joining data.
+License: GPL-3
+Imports: datetimeutils, fastmatch, utils, zoo

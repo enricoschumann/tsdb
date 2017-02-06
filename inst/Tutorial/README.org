@@ -1,0 +1,464 @@
+#+TITLE: tsdb: A terribly-simple data base for time series
+#+AUTHOR: Enrico Schumann
+#+OPTIONS: toc:nil
+#+BIND: org-latex-default-packages-alist nil
+#+BIND: org-use-sub-superscripts {}
+#+PROPERTY: tangle yes
+#+PROPERTY: header-args :comments link
+#+PROPERTY: header-args:R :session *R*
+#+PROPERTY: header-args :eval never-export
+# ------------------ LATEX ------------------
+#+LATEX_CLASS: scrartcl
+#+LATEX_CLASS_OPTIONS: [a4paper,fontsize=11pt]
+#+LATEX_HEADER: \addtokomafont{disposition}{\rmfamily}
+#+LATEX_HEADER: \addtokomafont{descriptionlabel}{\rmfamily}
+#+LATEX_HEADER: \setlength{\parindent}{0em}
+#+LATEX_HEADER: \setlength{\parskip}{2ex plus0.5ex minus0.5ex}
+#+LATEX_HEADER: \newcommand{\pmwr}{\textsc{pm}w\textsc{r}}
+#+LATEX_HEADER: \newcommand{\pl}{\textsc{pl}}
+#+LATEX_HEADER: \newcommand{\R}{\textsf{R}}
+#+LATEX_HEADER: \usepackage[backend=bibtex,citestyle=authoryear]{biblatex}
+#+LATEX_HEADER: \addbibresource{Library.bib}
+#+LATEX_HEADER: \usepackage[left=3cm,right=5cm,top=2cm,bottom=4cm,twoside]{geometry}
+#+LATEX_HEADER: \usepackage[libertine]{newtxmath} 
+#+LATEX_HEADER: \usepackage{fontspec}
+#+LATEX_HEADER: \setmainfont{Linux Libertine O}
+#+LATEX_HEADER: \setmonofont[Scale=0.91]{inconsolata}
+#+LATEX_HEADER: \usepackage{graphicx}
+#+LATEX_HEADER: \usepackage[dvipsnames]{xcolor}
+#+LATEX_HEADER: \definecolor{grey20}{gray}{0.20}
+#+LATEX_HEADER: \definecolor{grey30}{gray}{0.30}
+#+LATEX_HEADER: \definecolor{grey40}{gray}{0.40}
+#+LATEX_HEADER: \definecolor{grey90}{gray}{0.90}
+#+LATEX_HEADER: \definecolor{grey96}{gray}{0.96}
+#+LATEX_HEADER: \usepackage{listings}
+#+LATEX_HEADER: \lstset{language=R,basicstyle=\ttfamily,frame=single,commentstyle=\ttfamily\color{OliveGreen},
+#+LATEX_HEADER:         numberstyle=\ttfamily\footnotesize\color{gray},stringstyle=\ttfamily\color{blue},
+#+LATEX_HEADER:         backgroundcolor=\color{grey96},rulecolor=\color{grey90},showstringspaces=false,
+#+LATEX_HEADER:         }
+#+LATEX_HEADER: \lstnewenvironment{results}
+#+LATEX_HEADER:   {\lstset{basicstyle=\ttfamily\color{grey30},backgroundcolor={},frame=single,numbers=none,showstringspaces=false,rulecolor=\color{grey96}}}{}
+#+LATEX_HEADER: \usepackage{mdframed}
+#+LATEX_HEADER: \newenvironment{FAQ}
+#+LATEX_HEADER:  {\begin{mdframed}}{\end{mdframed}}
+#+LATEX_HEADER: \newenvironment{FAA}
+#+LATEX_HEADER:  {\begin{mdframed}}{\end{mdframed}}
+#+LATEX_HEADER: \usepackage{makeidx}\makeindex
+#+LATEX_HEADER: \usepackage[hidelinks]{hyperref}
+# ------------------ HTML ------------------
+#+HTML_HEAD: <meta name = "viewport" content="width=device-width">
+#+HTML_HEAD: <style>
+#+HTML_HEAD:  html,body {
+#+HTML_HEAD:    font-family: sans-serif;
+#+HTML_HEAD:    padding: 0;
+#+HTML_HEAD:    margin: 0;
+#+HTML_HEAD:  }
+#+HTML_HEAD:  body {
+#+HTML_HEAD:      line-height: 1.45;
+#+HTML_HEAD:  }
+#+HTML_HEAD:  #content {
+#+HTML_HEAD:    font-family: serif;
+#+HTML_HEAD:    border: 1px solid #eeeeee;
+#+HTML_HEAD:    border-radius: 3px;
+#+HTML_HEAD:    color: #222222; width: 100%;
+#+HTML_HEAD:    width: 700px; 
+#+HTML_HEAD:    padding-top: 2ex;
+#+HTML_HEAD:    padding: 1em;
+#+HTML_HEAD:    margin: 0.5em;
+#+HTML_HEAD:    margin-left: auto;margin-right: auto;
+#+HTML_HEAD:  }
+#+HTML_HEAD:  @media (max-width: 700px) {
+#+HTML_HEAD:    html,body,#content {
+#+HTML_HEAD:      width: 95%;
+#+HTML_HEAD:    }
+#+HTML_HEAD:  }
+#+HTML_HEAD:  .example {
+#+HTML_HEAD:    border: 1px solid rgb(240,240,240);
+#+HTML_HEAD:    padding: 4px;
+#+HTML_HEAD:    color: rgb(110,110,110);
+#+HTML_HEAD:    overflow: auto;
+#+HTML_HEAD:  }
+#+HTML_HEAD:  .src {
+#+HTML_HEAD:    border: 1px solid rgb(240,240,240);
+#+HTML_HEAD:    color: rgb(30,30,30);
+#+HTML_HEAD:    background-color: rgb(230,230,230);
+#+HTML_HEAD:    padding: 4px;
+#+HTML_HEAD:    overflow: auto;
+#+HTML_HEAD:  }
+#+HTML_HEAD:  .src:hover {
+#+HTML_HEAD:    background-color: rgb(240,240,240);
+#+HTML_HEAD:    padding: 4px;
+#+HTML_HEAD:  }
+#+HTML_HEAD:  dt {
+#+HTML_HEAD:    font-weight: bold;
+#+HTML_HEAD:  }
+#+HTML_HEAD:  li {
+#+HTML_HEAD:    margin-bottom: 0.5ex;
+#+HTML_HEAD:  }
+#+HTML_HEAD:  code {
+#+HTML_HEAD:    font-size: 115%;
+#+HTML_HEAD:    color: rgb(60,60,60);
+#+HTML_HEAD:  }
+#+HTML_HEAD:  .org-right {
+#+HTML_HEAD:    text-align: right;
+#+HTML_HEAD:  }
+#+HTML_HEAD:  nav ul {
+#+HTML_HEAD:    list-style-type: none;
+#+HTML_HEAD:  }
+#+HTML_HEAD: </style>
+
+#+BEGIN_SRC R :results none :exports none
+  options(useFancyQuotes=FALSE)
+#+END_SRC
+
+* Using tsdb
+
+** Writing data                                                    
+
+We first load the package.
+
+#+BEGIN_SRC R :session *R* :results none :exports code
+  library("tsdb")
+#+END_SRC
+
+Start by creating time-series data.
+#+BEGIN_SRC R :session *R* :results output :exports both
+  library("zoo")
+  z <- zoo(1:5, as.Date("2016-1-1")+0:4)
+  z
+#+END_SRC
+
+#+RESULTS:
+: 2016-01-01 2016-01-02 2016-01-03 2016-01-04 2016-01-05 
+:          1          2          3          4          5
+
+
+To store these data, we need to enforce a certain
+format, which the functions =ts_table= and
+=as.ts_table= do.
+
+#+BEGIN_SRC R :session *R* :results output :exports both
+ts <- as.ts_table(z, columns = "A")
+ts
+#+END_SRC
+
+#+RESULTS:
+: 5 rows [2016-01-01 -> 2016-01-05]: A
+
+Note that we had to provide a column name (=A=) for the
+data. That is not optional. It is one of the things
+that =ts_table= enforces. Another is that timestamps
+need to be of class =Date= or =POSIXct=.
+
+To store the data to a file, use =write_ts_table=. The
+function will take a directory and file name as
+arguments, which mimics the hierarchy of databases and
+tables in a classical database.
+#+BEGIN_SRC R :session *R* :results none :exports code 
+  write_ts_table(ts, dir = "~/tsdb/daily", file = "example1")
+#+END_SRC
+
+The written file will look like this: 
+#+INCLUDE: ~/tsdb/daily/example1 example
+
+You may notice that the dates been replaced by
+numbers. The mapping between these numbers and calendar
+times is described later, when we discuss the
+representation of timestamps.
+
+Let us write a second file. This time, we use
+=ts_table= directly.
+
+#+BEGIN_SRC R :session *R* :results output :exports both
+x <- array(1:20, dim = c(10,2))
+colnames(x) <- c("A", "B")
+x
+#+END_SRC
+
+#+RESULTS:
+#+begin_example 
+       A  B
+ [1,]  1 11
+ [2,]  2 12
+ [3,]  3 13
+ [4,]  4 14
+ [5,]  5 15
+ [6,]  6 16
+ [7,]  7 17
+ [8,]  8 18
+ [9,]  9 19
+[10,] 10 20
+#+end_example
+
+
+#+BEGIN_SRC R :session *R* :results output :exports both
+  ts_table(x, timestamp = as.Date("2016-1-1")+0:9)
+#+END_SRC
+
+#+RESULTS:
+: 10 rows [2016-01-01 -> 2016-01-10]: A, B
+
+We can also explicitly specify the column names, which
+will override the column names of the data. In fact,
+this is the preferred way, since it makes things more
+explicit (which usually means safer).
+#+BEGIN_SRC R :session *R* :results output :exports both
+  ts <- ts_table(x, timestamp = as.Date("2016-1-1")+0:9, 
+		 columns = c("B", "A"))
+  ts
+#+END_SRC
+
+#+RESULTS:
+: 10 rows [2016-01-01 -> 2016-01-10]: B, A
+
+We write the data to a file =example2=.
+#+BEGIN_SRC R :session *R* :results none :exports code 
+  write_ts_table(ts, dir = "~/tsdb/daily", file = "example2")
+#+END_SRC
+
+The written file looks like this:
+#+INCLUDE: ~/tsdb/daily/example2 example
+
+
+
+** Reading data                                              
+
+Use the function =read_ts_tables=.
+
+#+name: read1
+#+BEGIN_SRC R :session *R* :results output :exports both
+  read_ts_tables("example1", dir = "~/tsdb/daily", columns = "A")
+#+END_SRC
+
+The default return value is a list with components
+=data=, =timestamp=, =columns= and =file.path=.
+#+RESULTS: read1
+#+begin_example
+$data
+     [,1]
+[1,]    1
+[2,]    4
+[3,]    5
+
+$timestamp
+[1] "2016-01-01" "2016-01-04" "2016-01-05"
+
+$columns
+[1] "A"
+
+$file.path
+[1] "~/tsdb/daily/example1::A"
+#+end_example
+
+
+More convenient may be to specify a =return.class=.
+#+BEGIN_SRC R :session *R* :results output :exports both
+  read_ts_tables("example1", dir = "~/tsdb/daily", columns = "A",
+		 return.class = "zoo")
+#+END_SRC
+
+#+RESULTS:
+:            ~/tsdb/daily/example1::A
+: 2016-01-01                        1
+: 2016-01-04                        4
+: 2016-01-05                        5
+
+#+BEGIN_SRC R :session *R* :results output :exports both
+  read_ts_tables("example1", dir = "~/tsdb/daily", columns = "A",
+		 return.class = "data.frame")
+#+END_SRC
+
+#+RESULTS:
+:    timestamp ~/tsdb/daily/example1::A
+: 1 2016-01-01                        1
+: 2 2016-01-04                        4
+: 3 2016-01-05                        5
+
+
+But wait. We provided and wrote to the file values for
+1 January to 5 January. But we only got values for 1, 4
+and 5 January. The reason is that tsdb was written with
+financial data in mind, and on weekends there are no prices.
+#+BEGIN_SRC R :session *R* :results output :exports both
+weekdays(as.Date("2016-1-1")+0:4)
+#+END_SRC
+
+#+RESULTS:
+: [1] "Friday"   "Saturday" "Sunday"   "Monday"   "Tuesday"
+
+
+To obtain data for weekends as well, specify the
+argument =drop.weekends=.
+#+BEGIN_SRC R :session *R* :results output :exports both
+  read_ts_tables("example1", dir = "~/tsdb/daily",
+		 columns = "A",
+		 return.class = "data.frame",
+		 drop.weekends = FALSE)
+#+END_SRC
+
+#+RESULTS:
+:    timestamp ~/tsdb/daily/example1::A
+: 1 2016-01-01                        1
+: 2 2016-01-02                        2
+: 3 2016-01-03                        3
+: 4 2016-01-04                        4
+: 5 2016-01-05                        5
+
+
+You may have noticed a small difference in the names of
+the functions for reading and writing. We always write
+a single table, but we read tables.
+
+#+BEGIN_SRC R :session *R* :results output :exports both
+  read_ts_tables(c("example1", "example2"),
+		 dir = "~/tsdb/daily",
+		 columns = "A",
+		 return.class = "data.frame",
+		 drop.weekends = FALSE)
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+    timestamp ~/tsdb/daily/example1::A ~/tsdb/daily/example2::A
+1  2016-01-01                        1                       11
+2  2016-01-02                        2                       12
+3  2016-01-03                        3                       13
+4  2016-01-04                        4                       14
+5  2016-01-05                        5                       15
+6  2016-01-06                       NA                       16
+7  2016-01-07                       NA                       17
+8  2016-01-08                       NA                       18
+9  2016-01-09                       NA                       19
+10 2016-01-10                       NA                       20
+#+end_example
+
+The column names of the returned object consist of the filepaths and
+the column, which may be more information than we actually want. The
+argument =column.name= specifies the format; its default is
+=%dir%/%file%::%column%=.
+#+BEGIN_SRC R :session *R* :results output :exports both
+  read_ts_tables(c("example1", "example2"),
+		 dir = "~/tsdb/daily",
+		 columns = "A",
+		 return.class = "data.frame",
+		 drop.weekends = FALSE, 
+                 column.name = "%file%/%column%")
+#+END_SRC
+
+#+RESULTS:
+#+begin_example 
+    timestamp example1/A example2/A
+1  2016-01-01          1         11
+2  2016-01-02          2         12
+3  2016-01-03          3         13
+4  2016-01-04          4         14
+5  2016-01-05          5         15
+6  2016-01-06         NA         16
+7  2016-01-07         NA         17
+8  2016-01-08         NA         18
+9  2016-01-09         NA         19
+10 2016-01-10         NA         20
+#+end_example
+
+
+Missing values are by default set to =NA=. That happens even for
+missing columns, with a warning, though.
+#+BEGIN_SRC R :session *R* :results output :exports both
+  read_ts_tables(c("example1", "example2"),
+		 dir = "~/tsdb/daily",
+		 columns = c("A", "B"),
+		 return.class = "data.frame",
+		 drop.weekends = FALSE, 
+                 column.name = "%file%/%column%")
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+    timestamp example1/A example1/B example2/A example2/B
+1  2016-01-01          1         NA         11          1
+2  2016-01-02          2         NA         12          2
+3  2016-01-03          3         NA         13          3
+4  2016-01-04          4         NA         14          4
+5  2016-01-05          5         NA         15          5
+6  2016-01-06         NA         NA         16          6
+7  2016-01-07         NA         NA         17          7
+8  2016-01-08         NA         NA         18          8
+9  2016-01-09         NA         NA         19          9
+10 2016-01-10         NA         NA         20         10
+Warning message:
+In read_ts_tables(c("example1", "example2"), dir = "~/tsdb/daily",  :
+  columns missing
+#+end_example
+
+
+
+* How tsdb works
+
+** The file format
+
+tsdb can store and load time-series data. The format it
+uses is plain csv; a sample file my look as follows:
+
+#+BEGIN_EXAMPLE
+  "timestamp","close"
+  17131,11
+  17132,12
+  17133,13
+  17134,14
+  17135,15
+#+END_EXAMPLE
+
+Thus, the file has a header line that gives the names
+of the columns, with the first column always being
+named =timestamp=.
+
+The advantage of this plain format is that the data are
+in no way dependent on =tsdb=. The files can be used
+and manipulated by other software as well. For
+instance, if the above example is is stored in an
+appropriately named file =example=, we would reverse
+the order of the timestamps in a shell such as =bash=.
+
+#+BEGIN_SRC sh :results output
+  head -1 example; tail -n +2 example | sort -r
+#+END_SRC
+
+#+BEGIN_EXAMPLE
+  "timestamp","close"
+  17135,15
+  17134,14
+  17133,13
+  17132,12
+  17131,11
+#+END_EXAMPLE
+
+
+** Timestamps
+  :PROPERTIES:
+  :CUSTOM_ID: sec:timestamps
+  :END:
+
+
+* About tsdb
+
+A terribly-simple data base for time series. All series
+are saved as csv files. The package offers utilities
+for saving files in a standardised format, and for
+retrieving and joining data.
+
+** Good things
+
+- no setup needed, no system dependencies
+  (i.e. external software, such as a database)
+- completely portable [TODO mention encoding of
+  headers]; moving from one computer to another no
+  effort
+- data usable by other software
+
+
+** When you need another database
+
+- tsdb is potentially slow
+- no multi-user support; no access-rights management
+  (other than that provided by the OS)
+- no network protocols

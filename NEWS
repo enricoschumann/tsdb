@@ -1,0 +1,31 @@
+v0.4-0  (2017-02-06)
+
+  o 'read_ts_tables' has a new argument 'column.name',
+    which specifies the format of column names in results
+
+v0.3-0  (2016-12-10)
+
+  o 'write_ts_table' has a new argument 'add': If TRUE,
+    only new data are added to a file, and existing
+    data are kept.
+
+v0.2-1  (2016-12-09)
+
+  o A Tutorial is now installed with the package.
+    It can be accessed via
+    
+      browseURL(system.file("Tutorial/README.html", package = "tsdb"))
+      browseURL(system.file("Tutorial/README.pdf", package = "tsdb"))
+
+v0.2-0  (2016-12-05)
+
+  o 'read_ts_tables' can now read several columns
+    from files.
+
+  o New method 'as.zoo.ts_table' added.
+
+  o Tutorial added (see file README.org).
+  
+v0.1-0  (2016-11-24)
+
+  o Initial version of package.

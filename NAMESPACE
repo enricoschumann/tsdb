@@ -1,0 +1,23 @@
+export(
+    read_ts_tables,
+    write_ts_table,
+    ts_table,
+    as.ts_table
+       )
+
+importFrom("datetimeutils",
+           "isBusinessDay",
+           "previousBusinessDay")
+
+importFrom("fastmatch",
+           "fmatch")
+
+importFrom("utils",
+           "read.table", "write.table")
+
+importFrom("zoo",
+           "zoo", "coredata", "index", "as.zoo")
+
+S3method(print, ts_table)
+S3method(as.ts_table, zoo)
+S3method(as.zoo, ts_table)

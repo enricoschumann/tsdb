@@ -1,0 +1,86 @@
+2017-01-17  Enrico Schumann  <es@enricoschumann.net>
+
+	* R/functions.R (read_ts_tables): new argument
+	'column.name' that specifies the pattern of column
+	names in results
+
+2017-01-04  Enrico Schumann  <es@enricoschumann.net>
+
+        * DESCRIPTION (Version): 0.3-1
+
+	* R/functions.R (read_ts_tables): if 'start' is
+	missing, use 1970-1-1 (instead of the previous
+	365 days)
+
+2016-12-16  Enrico Schumann  <es@enricoschumann.net>
+
+	* R/functions.R (read_ts_tables): fix naming of
+	series when 'return.class' is 'zoo'
+
+2016-12-10  Enrico Schumann  <es@enricoschumann.net>
+
+	* DESCRIPTION (Version): Version: 0.3-0
+
+	* R/functions.R (write_ts_table): new argument
+	'add'. If TRUE, only data for timestamps not in
+	a file is added.
+
+2016-12-09  Enrico Schumann  <es@enricoschumann.net>
+
+	* DESCRIPTION (Version): Version: 0.2-1
+
+	* R/functions.R (ts_table): store timestamp as
+	numeric; add new attribute 't.type' (either
+	Date or POSIXct)
+	(.timestamp): internal function
+	(`.timestamp<-`): internal function
+
+2016-12-07  Enrico Schumann  <es@enricoschumann.net>
+
+	* inst/Tutorial/README.org: move README to
+	inst/Tutorial
+
+2016-12-05  Enrico Schumann  <es@enricoschumann.net>
+
+	* DESCRIPTION (Version): Version: 0.2-0
+
+	* README.org: add file
+
+	* NAMESPACE: export only 'read_ts_tables',
+	'write_ts_table', 'ts_table', 'as.ts_table'
+
+	* R/functions.R (read_ts_tables): support
+	reading several columns from files
+
+	* R/functions.R (as.zoo.ts_table): export
+	method
+
+	* man/*: add help files for all functions
+
+	* inst/unitTests/ut_write_read.R
+	(test.ts_table): add unit tests
+
+2016-12-01  Enrico Schumann  <es@enricoschumann.net>
+
+	* man/read_ts_tables.Rd: add help file
+
+2016-11-30  Enrico Schumann  <es@enricoschumann.net>
+
+	* NAMESPACE: import datetimeutils::isBusinessDay
+
+2016-11-25  Enrico Schumann  <es@enricoschumann.net>
+
+	* DESCRIPTION (Version): Version: 0.1-1
+
+	* R/functions.R (as.ts_table): add function
+	(as.ts_table.zoo): add method
+	(as.zoo.ts_table): add method
+
+2016-11-24  Enrico Schumann  <es@enricoschumann.net>
+
+	* R/functions.R (ttime): add function
+	(write_ts_table): add function
+	(read_ts_tables): add function
+	(ts_table): add function
+	(as.data.frame.ts_table, print.ts_table): add
+	methods
