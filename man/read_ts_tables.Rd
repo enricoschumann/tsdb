@@ -10,7 +10,8 @@
 read_ts_tables(file, dir, t.type = "guess",
                start, end, columns,
                return.class = NULL,
-               drop.weekends = TRUE)
+               drop.weekends = TRUE,
+               column.name = "\%dir\%/\%file\%::\%column\%")
 }
 \arguments{
   \item{file}{
@@ -37,9 +38,15 @@ read_ts_tables(file, dir, t.type = "guess",
   \item{drop.weekends}{
     logical
 }
+  \item{column.name}{
+
+    character: a format string for column names; may contain
+    \code{\%dir\%}, \code{\%file\%}, and \code{\%column\%}
+
+ }
 }
 \details{
-  Read files.
+  Read time-series data from csv files.
 }
 \value{
   When return.class is \code{NULL}, a list:

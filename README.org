@@ -111,6 +111,32 @@
   options(useFancyQuotes=FALSE)
 #+END_SRC
 
+
+* About tsdb
+
+A terribly-simple data base for time series. All series
+are saved as csv files. The package offers utilities
+for saving files in a standardised format, and for
+retrieving and joining data.
+
+** Good things about tsdb
+
+- no setup needed, no system dependencies
+  (i.e. external software, such as a database)
+- completely portable; moving from one computer to
+  another requires no effort (the only file to take
+  care of is file encoding)
+- data usable by other software
+
+
+** When you need another database
+
+- tsdb is potentially slow
+- no multi-user support; no access-rights management
+  (other than that provided by the OS)
+- no network protocols
+
+
 * Using tsdb
 
 ** Writing data                                                    
@@ -439,26 +465,3 @@ the order of the timestamps in a shell such as =bash=.
   :END:
 
 
-* About tsdb
-
-A terribly-simple data base for time series. All series
-are saved as csv files. The package offers utilities
-for saving files in a standardised format, and for
-retrieving and joining data.
-
-** Good things
-
-- no setup needed, no system dependencies
-  (i.e. external software, such as a database)
-- completely portable [TODO mention encoding of
-  headers]; moving from one computer to another no
-  effort
-- data usable by other software
-
-
-** When you need another database
-
-- tsdb is potentially slow
-- no multi-user support; no access-rights management
-  (other than that provided by the OS)
-- no network protocols

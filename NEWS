@@ -3,6 +3,9 @@ v0.4-0  (2017-02-06)
   o 'read_ts_tables' has a new argument 'column.name',
     which specifies the format of column names in results
 
+  o there is a piblic repository at
+    https://gitlab.com/enricoschumann/tsdb
+
 v0.3-0  (2016-12-10)
 
   o 'write_ts_table' has a new argument 'add': If TRUE,
