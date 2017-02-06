@@ -1,4 +1,6 @@
-2017-01-17  Enrico Schumann  <es@enricoschumann.net>
+2017-02-06  Enrico Schumann  <es@enricoschumann.net>
+
+        * DESCRIPTION (Version): 0.4-1
 
 	* R/functions.R (read_ts_tables): new argument
 	'column.name' that specifies the pattern of column
