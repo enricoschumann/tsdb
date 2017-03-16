@@ -5,6 +5,12 @@ export(
     as.ts_table
        )
 
+importFrom("DBI",
+           "dbGetQuery",
+           "dbQuoteIdentifier",
+           "dbWriteTable"
+           )
+
 importFrom("datetimeutils",
            "isBusinessDay",
            "previousBusinessDay")

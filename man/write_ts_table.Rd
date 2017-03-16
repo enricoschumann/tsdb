@@ -7,7 +7,7 @@
   Write time-series data to files.
 }
 \usage{
-write_ts_table(x, dir, file, add = FALSE, overwrite = FALSE)
+write_ts_table(x, dir, file, add = FALSE, overwrite = FALSE, backend = "csv")
 }
 \arguments{
   \item{x}{
@@ -27,7 +27,11 @@ write_ts_table(x, dir, file, add = FALSE, overwrite = FALSE)
 }
   \item{overwrite}{
     logical: overwrite existing file when data differs 
-}
+  }
+  \item{backend}{
+    character: currently, \code{csv} and \code{monetdb} are supported
+  }
+
 }
 \details{
   Write files.
@@ -44,6 +48,5 @@ write_ts_table(x, dir, file, add = FALSE, overwrite = FALSE)
 \examples{
 \dontrun{
 write_ts_table(ts_table(1, Sys.Date(), "a_column"),
-               dir = "~/tsdb/daily", file = "example")
-}
+               dir = "~/tsdb/daily", file = "example")}
 }

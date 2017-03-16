@@ -11,7 +11,8 @@ read_ts_tables(file, dir, t.type = "guess",
                start, end, columns,
                return.class = NULL,
                drop.weekends = TRUE,
-               column.name = "\%dir\%/\%file\%::\%column\%")
+               column.name = "\%dir\%/\%file\%::\%column\%",
+               backend = "csv")
 }
 \arguments{
   \item{file}{
@@ -43,7 +44,11 @@ read_ts_tables(file, dir, t.type = "guess",
     character: a format string for column names; may contain
     \code{\%dir\%}, \code{\%file\%}, and \code{\%column\%}
 
- }
+  }
+  \item{backend}{
+    character: currently, \code{csv} and \code{monetdb} are supported
+  }
+
 }
 \details{
   Read time-series data from csv files.

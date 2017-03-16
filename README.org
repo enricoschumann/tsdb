@@ -159,7 +159,7 @@ Start by creating time-series data.
 :          1          2          3          4          5
 
 
-To store these data, we need to enforce a certain
+To store these data, we need to enforce a consistent
 format, which the functions =ts_table= and
 =as.ts_table= do.
 

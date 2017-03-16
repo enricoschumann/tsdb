@@ -1,3 +1,14 @@
+2017-03-16  Enrico Schumann  <es@enricoschumann.net>
+
+	* R/functions.R (.columns, `.columns<-`)
+	(.t.type, `.t.type<-`): add internal functions
+	(write_ts_table): new argument 'backend'
+	(read_ts_tables): new argument 'backend'
+
+	* NAMESPACE: import from package DBI
+
+	* R/functions.R (as.matrix.ts_table): add method
+
 2017-02-06  Enrico Schumann  <es@enricoschumann.net>
 
         * DESCRIPTION (Version): 0.4-1

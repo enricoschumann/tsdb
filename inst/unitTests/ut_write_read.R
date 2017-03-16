@@ -1,6 +1,7 @@
 ## -*- truncate-lines: t; fill-column: 65; comment-column: 50; -*-
 
 test.ts_table <- function() {
+
     require("zoo")
     x <- ts_table(11:15, as.Date("2016-1-1")-5:1, "close")
 
