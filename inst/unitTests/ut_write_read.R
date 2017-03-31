@@ -68,31 +68,40 @@ test.read_ts_tables <- function() {
 
 test.write_ts_table <- function() {
 
-    require(tsdb);require(RUnit)
+##    require(tsdb);require(RUnit)
     dir <- tempdir()
 
     x <- ts_table(data = 11:15,
                   timestamp = as.Date("2016-1-1") + 1:5,
-                  columns = "A")
-    ans <- write_ts_table(x, dir, "A")
+                  columns = "X")
+    ans <- write_ts_table(x, dir, "X")
+    message(dir, "   ", ans, "  ", nrow(x))
     checkEquals(ans, nrow(x))
-    read_ts_tables("A", dir)
-    
+    read_ts_tables("X", dir)
+
+    ## add = TRUE: one new data point is found
     x <- ts_table(data = 11:16,
                   timestamp = as.Date("2016-1-1") + 1:6,
-                  columns = "A")
+                  columns = "X")
+    ans <- write_ts_table(x, dir, "X", add = TRUE)
+    checkEquals(ans, 1)
 
-    write_ts_table(x, dir, "A", add = TRUE)
+    ## ... write again: no new data point is written
+    ans <- write_ts_table(x, dir, "X", add = TRUE)
+    checkEquals(ans, 0)
 
+    ## add a single new data point
     x <- ts_table(data = 1,
                   timestamp = as.Date("2015-1-1"),
-                  columns = "A")
-    ans <- write_ts_table(x, dir, "A", add = TRUE)
-    checkEquals(ans, nrow(x))
+                  columns = "X")
+    ans <- write_ts_table(x, dir, "X", add = TRUE)
+    checkEquals(ans, 1)
 
+    ## ... write again: no new data point is written
     x <- ts_table(data = 1,
                   timestamp = as.Date("2015-1-1"),
-                  columns = "A")
-    write_ts_table(x, dir, "A")
+                  columns = "X")
+    ans <- write_ts_table(x, dir, "X")
+    checkEquals(ans, 0)
 
 }

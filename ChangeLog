@@ -1,3 +1,11 @@
+2017-03-31  Enrico Schumann  <es@enricoschumann.net>
+
+	* DESCRIPTION (Version): 0.4-3
+
+	* R/functions.R (write_ts_table): fix handling
+	of argument 'overwrite': it had been ignored (reported
+	by Torsten von Bartenwerffer)
+
 2017-03-16  Enrico Schumann  <es@enricoschumann.net>
 
 	* R/functions.R (.columns, `.columns<-`)

@@ -76,7 +76,7 @@ write_ts_table <- function(x, dir, file,
             new <- !timestamp %in% ttime(in_db$timestamp)
             ans <- 0
             if (any(new)) {
-                ans <- length(new)
+                ans <- sum(new)
                 timestamp <- c(ttime(in_db$timestamp),                       
                                timestamp[new])
                 x <- rbind(in_db$data, x[new, ])
@@ -87,11 +87,18 @@ write_ts_table <- function(x, dir, file,
                 }
             }
         }
-        write.table(as.matrix(data.frame(timestamp, unclass(x))),
-                    file = dfile,
-                    row.names = FALSE,
-                    col.names = c("timestamp", columns),
-                    sep = ",")
+        if (file.exists(dfile) && !overwrite && !add) {
+            ans  <- 0
+            message("file exists; use ", sQuote("overwrite = TRUE"), " to overwrite file")
+        } else if (add && sum(new) == 0L) {
+            ans  <- 0
+        } else {
+            write.table(as.matrix(data.frame(timestamp, unclass(x))),
+                        file = dfile,
+                        row.names = FALSE,
+                        col.names = c("timestamp", columns),
+                        sep = ",")
+        }
     } else if (backend == "monetdb") {
 
         if (!inherits(dir, "MonetDBEmbeddedConnection")) {
