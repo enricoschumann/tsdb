@@ -124,7 +124,7 @@ retrieving and joining data.
 - no setup needed, no system dependencies
   (i.e. external software, such as a database)
 - completely portable; moving from one computer to
-  another requires no effort (the only file to take
+  another requires no effort (the only thing to take
   care of is file encoding)
 - data usable by other software
 
