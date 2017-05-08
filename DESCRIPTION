@@ -1,8 +1,8 @@
 Package: tsdb
 Type: Package
 Title: Terribly-Simple Data Base for Time Series
-Version: 0.4-3
-Date: 2017-03-31
+Version: 0.4-4
+Date: 2017-05-08
 Maintainer: Enrico Schumann <es@enricoschumann.net>
 Authors@R: person("Enrico", "Schumann",
                   role  = c("aut", "cre"),
@@ -13,3 +13,4 @@ Description: A terribly-simple data base for time series. All
   joining data.
 License: GPL-3
 Imports: DBI, datetimeutils, fastmatch, utils, zoo
+Suggests: MonetDBLite

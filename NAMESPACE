@@ -6,14 +6,16 @@ export(
        )
 
 importFrom("DBI",
+           "dbConnect",
+           "dbDisconnect",
            "dbGetQuery",
            "dbQuoteIdentifier",
            "dbWriteTable"
            )
 
 importFrom("datetimeutils",
-           "isBusinessDay",
-           "previousBusinessDay")
+           "is_businessday",
+           "previous_businessday")
 
 importFrom("fastmatch",
            "fmatch")

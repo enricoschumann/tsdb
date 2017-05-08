@@ -1,3 +1,11 @@
+2017-05-08  Enrico Schumann  <es@enricoschumann.net>
+
+	* DESCRIPTION (Version): Version: 0.4-4
+	(Suggests): add MonetDBLite
+
+	* R/functions.R	(read_ts_tables): update for
+	changes in package datetimeutils (0.2-0)
+
 2017-03-31  Enrico Schumann  <es@enricoschumann.net>
 
 	* DESCRIPTION (Version): 0.4-3

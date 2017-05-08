@@ -168,13 +168,13 @@ read_ts_tables <- function(file, dir, t.type = "guess",
                          as.Date(start)
             
             end   <- if (missing(end))
-                         previousBusinessDay(Sys.Date())
+                         previous_businessday(Sys.Date())
                      else
                          as.Date(end)
             
             timestamp <- seq(start, end , "1 day")
             if (drop.weekends)
-                timestamp <- timestamp[isBusinessDay(timestamp)]
+                timestamp <- timestamp[is_businessday(timestamp)]
         } else if (t.type == "POSIXct") {
             warning("'Oh boy', said Helen, 'that's not really supported.'")
             start <- if (missing(start))
@@ -183,7 +183,7 @@ read_ts_tables <- function(file, dir, t.type = "guess",
                          as.POSIXct(start)
             
             if (missing(end))
-                end <- as.POSIXct(previousBusinessDay(Sys.Date()))
+                end <- as.POSIXct(previous_businessday(Sys.Date()))
             else
                 end <- as.POSIXct(end)
             timestamp <- seq(start, end , "1 sec")
