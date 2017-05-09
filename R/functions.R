@@ -64,6 +64,8 @@ write_ts_table <- function(x, dir, file,
 
     backend <- tolower(backend)
     ans <- nrow(x)
+    if (ans == 0L)
+        return(invisible(0L))
     if (backend == "csv") {
         dfile <- if (missing(dir))
                      file

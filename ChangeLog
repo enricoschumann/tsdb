@@ -1,3 +1,8 @@
+2017-05-09  Enrico Schumann  <es@enricoschumann.net>
+
+	* R/functions.R (write_ts_table): when ts_table
+	has zero rows, return(0) at once
+
 2017-05-08  Enrico Schumann  <es@enricoschumann.net>
 
 	* DESCRIPTION (Version): Version: 0.4-4
