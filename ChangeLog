@@ -1,5 +1,10 @@
 2017-05-09  Enrico Schumann  <es@enricoschumann.net>
 
+	* DESCRIPTION (Version): 0.4-5
+
+	* R/functions.R (write_ts_table): suppress
+	scientific notation when writing to file
+
 	* R/functions.R (write_ts_table): when ts_table
 	has zero rows, return(0) at once
 	(print.ts_table): suppress warnings when
@@ -7,7 +12,7 @@
 
 2017-05-08  Enrico Schumann  <es@enricoschumann.net>
 
-	* DESCRIPTION (Version): Version: 0.4-4
+	* DESCRIPTION (Version): 0.4-4
 	(Suggests): add MonetDBLite
 
 	* R/functions.R	(read_ts_tables): update for
@@ -55,7 +60,7 @@
 
 2016-12-10  Enrico Schumann  <es@enricoschumann.net>
 
-	* DESCRIPTION (Version): Version: 0.3-0
+	* DESCRIPTION (Version): 0.3-0
 
 	* R/functions.R (write_ts_table): new argument
 	'add'. If TRUE, only data for timestamps not in
@@ -78,7 +83,7 @@
 
 2016-12-05  Enrico Schumann  <es@enricoschumann.net>
 
-	* DESCRIPTION (Version): Version: 0.2-0
+	* DESCRIPTION (Version): 0.2-0
 
 	* README.org: add file
 
@@ -106,7 +111,7 @@
 
 2016-11-25  Enrico Schumann  <es@enricoschumann.net>
 
-	* DESCRIPTION (Version): Version: 0.1-1
+	* DESCRIPTION (Version): 0.1-1
 
 	* R/functions.R (as.ts_table): add function
 	(as.ts_table.zoo): add method

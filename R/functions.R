@@ -58,12 +58,14 @@ write_ts_table <- function(x, dir, file,
                            backend = "csv") {
     if (!(inherits(x, "ts_table")))
         stop(sQuote("x"), " must be a ts_table")
-    
+
+    save.scipen <- options(scipen = 1e5)
+    on.exit(options(scipen = save.scipen))
     timestamp <- .timestamp(x)
     columns   <- .columns(x)
 
     backend <- tolower(backend)
-    ans <- nrow(x)
+    ans <- dim(x)[1L] ## a ts_table is always a matrix
     if (ans == 0L)
         return(invisible(0L))
     if (backend == "csv") {
@@ -81,7 +83,7 @@ write_ts_table <- function(x, dir, file,
                 ans <- sum(new)
                 timestamp <- c(ttime(in_db$timestamp),                       
                                timestamp[new])
-                x <- rbind(in_db$data, x[new, ])
+                x <- rbind(in_db$data, x[new, , drop = FALSE])
                 if (is.unsorted(timestamp)) {
                     ii <- order(timestamp)
                     timestamp <- timestamp[ii]
@@ -91,7 +93,9 @@ write_ts_table <- function(x, dir, file,
         }
         if (file.exists(dfile) && !overwrite && !add) {
             ans  <- 0
-            message("file exists; use ", sQuote("overwrite = TRUE"), " to overwrite file")
+            message("file exists; use ", sQuote("add = TRUE"),
+                    " or ", sQuote("overwrite = TRUE"),
+                    " to change/overwrite file")
         } else if (add && sum(new) == 0L) {
             ans  <- 0
         } else {
