@@ -375,8 +375,11 @@ as.matrix.ts_table <- function(x, ...) {
 
 print.ts_table <- function(x, ...) {
     tmp <- ttime(.timestamp(x),
-                 from = "numeric", to = attr(x, "t.type"))    
-    from_to <- range(tmp)
+                 from = "numeric", to = attr(x, "t.type"))
+    from_to <- if (length(tmp))
+                   range(tmp)
+               else
+                   c(NA, NA)
     cat(nrow(x), " rows [",
         as.character(from_to[[1L]]), " -> ",
         as.character(from_to[[2]]), 

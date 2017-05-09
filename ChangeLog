@@ -2,6 +2,8 @@
 
 	* R/functions.R (write_ts_table): when ts_table
 	has zero rows, return(0) at once
+	(print.ts_table): suppress warnings when
+	ts_table has zero rows
 
 2017-05-08  Enrico Schumann  <es@enricoschumann.net>
 
