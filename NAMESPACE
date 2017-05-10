@@ -1,8 +1,9 @@
 export(
+    as.ts_table,
+    file_info,
     read_ts_tables,
-    write_ts_table,
     ts_table,
-    as.ts_table
+    write_ts_table
        )
 
 importFrom("DBI",

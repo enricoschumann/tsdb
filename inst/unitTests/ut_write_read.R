@@ -58,11 +58,18 @@ test.read_ts_tables <- function() {
                           .Dim = c(5L, 2L)))
 
 
-    z1 <- ts_table(11:15, as.POSIXct("2016-1-1 10:00:00", tz = "UTC")+0:4, "close")
-    write_ts_table(z1, dir, "X1")
-    z2 <- ts_table(1:5, as.POSIXct("2016-1-1 10:00:00", tz = "UTC")+1:5, "close")
-    write_ts_table(z2, dir, "X2")
-    read_ts_tables(c("X1", "X2"), dir, columns = "close")
+    ## z1 <- ts_table(11:15, as.POSIXct("2016-1-1 10:00:00", tz = "UTC")+0:4, "close")
+    ## write_ts_table(z1, dir, "X1")
+    ## z2 <- ts_table(1:5, as.POSIXct("2016-1-1 10:00:00", tz = "UTC")+1:5, "close")
+    ## write_ts_table(z2, dir, "X2")
+    ## read_ts_tables(c("X1", "X2"), dir, columns = "close")
+
+    
+    ## check empty file
+    writeLines('"timestamp","close"', file.path(dir, "empty"))
+    em <- read_ts_tables("empty", dir)
+    checkEquals(em$timestamp, structure(numeric(0), class = "Date"))
+    checkEquals(em$data, structure(numeric(0), .Dim = 0:1))
 
 }
 

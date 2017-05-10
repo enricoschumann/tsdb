@@ -154,12 +154,16 @@ read_ts_tables <- function(file, dir, t.type = "guess",
             else
                 stop("check lengths of file and dir")        
         }
-        
-        samp <- readLines(dfile[[1]], n = 2L)
+
+        if (t.type == "guess" || missing(columns))
+            samp <- readLines(dfile[[1]], n = 2L)
         if (t.type == "guess") {
-            tmp <- as.numeric(
-                strsplit(samp[[2]], ",", fixed = TRUE)[[1L]][[1L]])
-            t.type <- if (tmp < 30000) "Date" else "POSIXct"
+            if (length(samp) == 2L) {
+                tmp <- as.numeric(
+                    strsplit(samp[[2]], ",", fixed = TRUE)[[1L]][[1L]])
+                t.type <- if (tmp < 30000) "Date" else "POSIXct"
+            } else
+                t.type <- "Date"
         }
         if (missing(columns)) {
             tmp <- gsub("\"", "",
@@ -281,12 +285,26 @@ file_info <- function(dir, file) {
              else
                  file.path(dir, file)
 
-    res <- " "
-    class(res) <- "file_info"
+    nf <- length(dfile)
+    res <- data.frame(dir_file = dfile,
+                      columns = character(nf),
+                      min_timestamp = numeric(nf),
+                      max_timestamp = numeric(nf),
+                      stringsAsFactors = FALSE)
+                      
+    for (i in seq_len(nf)) {
+        fi <- read_ts_tables(dfile[i])
+        res[["min_timestamp"]][i] <- suppressWarnings(min(fi$timestamp))
+        res[["max_timestamp"]][i] <- suppressWarnings(max(fi$timestamp))
+    }
+    res[["min_timestamp"]][!is.finite(res[["min_timestamp"]])] <- NA
+    res[["max_timestamp"]][!is.finite(res[["max_timestamp"]])] <- NA
+    class(res) <- c("file_info", "data.frame")
+    res
 }
 
 print.file_info <- function(x, ...) {
-    print(unclass(x))
+    print(x, ...)
 }
 
 update_ts_table <- function(x, timestamp, type, file)

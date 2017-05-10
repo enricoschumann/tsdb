@@ -1,3 +1,12 @@
+2017-05-10  Enrico Schumann  <es@enricoschumann.net>
+
+	* R/functions.R (read_ts_tables): safeguard for
+	empty files
+	(file_info): add function
+
+	* inst/unitTests/ut_write_read.R
+	(test.read_ts_tables): add test for empty files
+
 2017-05-09  Enrico Schumann  <es@enricoschumann.net>
 
 	* DESCRIPTION (Version): 0.4-5
@@ -23,8 +32,8 @@
 	* DESCRIPTION (Version): 0.4-3
 
 	* R/functions.R (write_ts_table): fix handling
-	of argument 'overwrite': it had been ignored (reported
-	by Torsten von Bartenwerffer)
+	of argument 'overwrite': it had been
+	ignored (reported by Torsten von Bartenwerffer)
 
 2017-03-16  Enrico Schumann  <es@enricoschumann.net>
 
