@@ -420,6 +420,14 @@ In read_ts_tables(c("example1", "example2"), dir = "~/tsdb/daily",  :
 
 * How tsdb works
 
+** ts_tables
+
+   tsdb works with /time-series tables/ (=ts_tables=). These are
+   numeric matrices, so there is always a =dim= attribute. Attached to
+   this matrix are several attributes: 
+
+- timestamp :: the numeric representation of the timestamp
+
 ** The file format
 
 tsdb can store and load time-series data. The format it

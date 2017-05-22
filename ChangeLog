@@ -1,6 +1,31 @@
+2017-05-22  Enrico Schumann  <es@enricoschumann.net>
+
+	* DESCRIPTION (Version): 0.4-7
+
+	* R/functions.R (ts_table): attribute
+	'timestamp' is now the actual datetime vector,
+	not its numeric representation (this reverts
+	some changes introduced with ChangeLog entry
+	of 2016-12-09)
+
+	* R/functions.R (ts_table): explicitly unname
+	'x' (i.e. drop column and row names)
+
+2017-05-16  Enrico Schumann  <es@enricoschumann.net>
+
+	* R/functions.R (write_ts_table): have empty
+	files written (such files will only contain one
+	line, the headers)
+
+	* inst/unitTests/ut_write_read.R
+	(test.write_ts_table): add checks for writing
+	an empty file
+
 2017-05-13  Enrico Schumann  <es@enricoschumann.net>
 
-	* DESCRIPTION (Version): Version: 0.4-6
+	* DESCRIPTION (Version): 0.4-6
+
+2017-05-10  Enrico Schumann  <es@enricoschumann.net>
 
 	* R/functions.R (read_ts_tables): safeguard for
 	empty files

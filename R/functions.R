@@ -61,18 +61,25 @@ write_ts_table <- function(x, dir, file,
 
     save.scipen <- options(scipen = 1e5)
     on.exit(options(scipen = save.scipen))
-    timestamp <- .timestamp(x)
+    timestamp <- ttime(.timestamp(x))
     columns   <- .columns(x)
 
     backend <- tolower(backend)
     ans <- dim(x)[1L] ## a ts_table is always a matrix
-    if (ans == 0L)
-        return(invisible(0L))
     if (backend == "csv") {
         dfile <- if (missing(dir))
                      file
                  else
                      file.path(dir, file)
+        if (ans == 0L) {
+            if (!file.exists(dfile))
+                write.table(as.matrix(data.frame(timestamp, unclass(x))),
+                            file = dfile,
+                            row.names = FALSE,
+                            col.names = c("timestamp", columns),
+                            sep = ",")
+            return(invisible(0L))
+        }
         if (add) {
             in_db <- read_ts_tables(file, dir, drop.weekends = FALSE)
             if (any(in_db$columns != columns))
@@ -81,9 +88,9 @@ write_ts_table <- function(x, dir, file,
             ans <- 0
             if (any(new)) {
                 ans <- sum(new)
-                timestamp <- c(ttime(in_db$timestamp),                       
+                timestamp <- c(ttime(in_db$timestamp),
                                timestamp[new])
-                x <- rbind(in_db$data, x[new, , drop = FALSE])
+                x <- rbind(in_db$data, x[new, ,drop = FALSE])
                 if (is.unsorted(timestamp)) {
                     ii <- order(timestamp)
                     timestamp <- timestamp[ii]
@@ -161,7 +168,8 @@ read_ts_tables <- function(file, dir, t.type = "guess",
             if (length(samp) == 2L) {
                 tmp <- as.numeric(
                     strsplit(samp[[2]], ",", fixed = TRUE)[[1L]][[1L]])
-                t.type <- if (tmp < 30000) "Date" else "POSIXct"
+                t.type <- if (tmp < 43200) ## 86400/2
+                              "Date" else "POSIXct"
             } else
                 t.type <- "Date"
         }
@@ -293,7 +301,7 @@ file_info <- function(dir, file) {
                       stringsAsFactors = FALSE)
                       
     for (i in seq_len(nf)) {
-        fi <- read_ts_tables(dfile[i])
+        fi <- try(read_ts_tables(dfile[i]), silent = TRUE)
         res[["min_timestamp"]][i] <- suppressWarnings(min(fi$timestamp))
         res[["max_timestamp"]][i] <- suppressWarnings(max(fi$timestamp))
     }
@@ -330,6 +338,7 @@ ts_table <- function(data, timestamp, columns) {
     ans <- as.matrix(data)
     if (missing(columns))
         columns <- colnames(ans)
+    ans <- unname(ans)
     if (is.null(columns))
         stop("no column names, and ", sQuote("columns"), " not provided")
     if (ncol(ans) != length(columns))
@@ -339,7 +348,7 @@ ts_table <- function(data, timestamp, columns) {
         timestamp <- timestamp[ii]
         ans <- ans[ii, ,drop = FALSE]
     }
-    attr(ans, "timestamp") <- ttime(timestamp)
+    attr(ans, "timestamp") <- timestamp
     attr(ans, "t.type") <- t.type
     attr(ans, "columns") <- columns
     class(ans) <- "ts_table"
@@ -360,9 +369,7 @@ as.ts_table.zoo <- function(x, columns, ...) {
 }
 
 as.zoo.ts_table <- function(x, ...) {
-    ans <- zoo(unname(as.matrix(x)),
-               ttime(.timestamp(x),
-                     from = "numeric", to = attr(x, "t.type")))
+    ans <- zoo(unname(as.matrix(x)), .timestamp(x))
     colnames(ans) <- .columns(x)
     ans
 }
@@ -396,18 +403,23 @@ as.matrix.ts_table <- function(x, ...) {
 }
 
 print.ts_table <- function(x, ...) {
-    tmp <- ttime(.timestamp(x),
-                 from = "numeric", to = attr(x, "t.type"))
+    tmp <- .timestamp(x)
     from_to <- if (length(tmp))
                    range(tmp)
                else
                    c(NA, NA)
-    cat(nrow(x), " rows [",
-        as.character(from_to[[1L]]), " -> ",
-        as.character(from_to[[2]]), 
-        "]: ", 
-        paste(attr(x, "columns"), collapse = ", "),
-        "\n", sep = "")
+    if (nrow(x))
+        cat(nrow(x), " rows [",
+            as.character(from_to[[1L]]), " -> ",
+            as.character(from_to[[2]]), 
+            "]: ", 
+            paste(attr(x, "columns"), collapse = ", "),
+            "\n", sep = "")
+    else
+        cat(nrow(x), " rows : ", 
+            paste(attr(x, "columns"), collapse = ", "),
+            "\n", sep = "")
+        
     invisible(x)
 }
 

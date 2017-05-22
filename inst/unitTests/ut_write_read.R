@@ -3,22 +3,35 @@
 test.ts_table <- function() {
 
     require("zoo")
-    x <- ts_table(11:15, as.Date("2016-1-1")-5:1, "close")
+    y <- ts_table(11:15, as.Date("2016-1-1")-5:1, "close")
 
-    checkEquals(x,
+    checkEquals(y,
                 structure(11:15,
                           .Dim = c(5L, 1L),
-                          timestamp = c(16796, 16797, 16798, 16799, 16800),
+                          timestamp = structure(c(16796, 16797, 16798, 16799, 16800),
+                                                class = "Date"),
                           t.type = "Date",
                           columns = "close",
                           class = "ts_table"))
 
     tmp <- as.matrix(11:15); colnames(tmp) <- "close"    
-    checkEquals(as.zoo(x),
+    checkEquals(as.zoo(y),
                 zoo(tmp, as.Date("2016-1-1")-5:1))
 
-    checkEquals(as.ts_table(as.zoo(x)), x)
+    checkEquals(as.ts_table(as.zoo(y)), y)
 
+    ## check unnaming
+    x <- as.matrix(11:15)
+    colnames(x) <- "test_name"
+    y <- ts_table(x, as.Date("2016-1-1")-5:1, "close")
+    checkEquals(y,
+                structure(11:15,
+                          .Dim = c(5L, 1L),
+                          timestamp = structure(c(16796, 16797, 16798, 16799, 16800),
+                                                class = "Date"),
+                          t.type = "Date",
+                          columns = "close",
+                          class = "ts_table"))
 
     ## intraday
     y <- ts_table(11:15,
@@ -26,14 +39,15 @@ test.ts_table <- function() {
                   "close")
     checkEquals(y,
                 structure(11:15, .Dim = c(5L, 1L),
-                          timestamp = c(1451642400, 1451642401,
-                                        1451642402, 1451642403,
-                                        1451642404),
+                          timestamp = structure(c(1451642400, 1451642401,
+                                                  1451642402, 1451642403,
+                                                  1451642404),
+                                                class = c("POSIXct", "POSIXt")),
                           t.type = "POSIXct",
                           columns = "close",
                           class = "ts_table"))
-                
-}
+
+
 
 test.read_ts_tables <- function() {
 
@@ -75,14 +89,14 @@ test.read_ts_tables <- function() {
 
 test.write_ts_table <- function() {
 
-##    require(tsdb);require(RUnit)
+    ## require(tsdb);require(RUnit)
     dir <- tempdir()
 
     x <- ts_table(data = 11:15,
                   timestamp = as.Date("2016-1-1") + 1:5,
                   columns = "X")
     ans <- write_ts_table(x, dir, "X")
-    message(dir, "   ", ans, "  ", nrow(x))
+    ## message(dir, "   ", ans, "  ", nrow(x))
     checkEquals(ans, nrow(x))
     read_ts_tables("X", dir)
 
@@ -97,6 +111,7 @@ test.write_ts_table <- function() {
     ans <- write_ts_table(x, dir, "X", add = TRUE)
     checkEquals(ans, 0)
 
+    
     ## add a single new data point
     x <- ts_table(data = 1,
                   timestamp = as.Date("2015-1-1"),
@@ -111,4 +126,13 @@ test.write_ts_table <- function() {
     ans <- write_ts_table(x, dir, "X")
     checkEquals(ans, 0)
 
+
+    ## write an empty file
+    x <- ts_table(numeric(0),
+                  timestamp = Sys.Date()[0],
+                  columns = "TEST")
+    
+    ans <- write_ts_table(x, dir, "EMPTY_FILE")
+    checkEquals(ans, 0)
+    checkTrue(file.exists(file.path(dir, "EMPTY_FILE")))
 }
