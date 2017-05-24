@@ -2,6 +2,8 @@
 
 test.ts_table <- function() {
 
+    require("RUnit")
+    require("tsdb")
     require("zoo")
     y <- ts_table(11:15, as.Date("2016-1-1")-5:1, "close")
 
@@ -47,7 +49,7 @@ test.ts_table <- function() {
                           columns = "close",
                           class = "ts_table"))
 
-
+}
 
 test.read_ts_tables <- function() {
 
@@ -89,27 +91,48 @@ test.read_ts_tables <- function() {
 
 test.write_ts_table <- function() {
 
-    ## require(tsdb);require(RUnit)
     dir <- tempdir()
 
     x <- ts_table(data = 11:15,
                   timestamp = as.Date("2016-1-1") + 1:5,
                   columns = "X")
     ans <- write_ts_table(x, dir, "X")
-    ## message(dir, "   ", ans, "  ", nrow(x))
     checkEquals(ans, nrow(x))
-    read_ts_tables("X", dir)
-
+    checkEquals(readLines(file.path(dir, "x")),
+                c("\"timestamp\",\"X\"",
+                  "16802,11",
+                  "16803,12",
+                  "16804,13", 
+                  "16805,14",
+                  "16806,15"))
+    
     ## add = TRUE: one new data point is found
     x <- ts_table(data = 11:16,
                   timestamp = as.Date("2016-1-1") + 1:6,
                   columns = "X")
     ans <- write_ts_table(x, dir, "X", add = TRUE)
     checkEquals(ans, 1)
+    checkEquals(readLines(file.path(dir, "x")),
+                c("\"timestamp\",\"X\"",
+                  "16802,11",
+                  "16803,12",
+                  "16804,13", 
+                  "16805,14",
+                  "16806,15",
+                  "16807,16"))
 
+    
     ## ... write again: no new data point is written
     ans <- write_ts_table(x, dir, "X", add = TRUE)
     checkEquals(ans, 0)
+    checkEquals(readLines(file.path(dir, "x")),
+                c("\"timestamp\",\"X\"",
+                  "16802,11",
+                  "16803,12",
+                  "16804,13", 
+                  "16805,14",
+                  "16806,15",
+                  "16807,16"))
 
     
     ## add a single new data point
@@ -118,15 +141,85 @@ test.write_ts_table <- function() {
                   columns = "X")
     ans <- write_ts_table(x, dir, "X", add = TRUE)
     checkEquals(ans, 1)
+    checkEquals(readLines(file.path(dir, "x")),
+                c("\"timestamp\",\"X\"",
+                  "16436,1",
+                  "16802,11",
+                  "16803,12",
+                  "16804,13", 
+                  "16805,14",
+                  "16806,15",
+                  "16807,16"))
 
+    
     ## ... write again: no new data point is written
     x <- ts_table(data = 1,
                   timestamp = as.Date("2015-1-1"),
                   columns = "X")
     ans <- write_ts_table(x, dir, "X")
     checkEquals(ans, 0)
+    checkEquals(readLines(file.path(dir, "x")),
+                c("\"timestamp\",\"X\"",
+                  "16436,1",
+                  "16802,11",
+                  "16803,12",
+                  "16804,13", 
+                  "16805,14",
+                  "16806,15",
+                  "16807,16"))
 
+    x <- ts_table(numeric(0),
+                  timestamp = Sys.Date()[0],
+                  columns = "X")
+    ans <- write_ts_table(x, dir, "X")
+    checkEquals(ans, 0)
+    checkEquals(readLines(file.path(dir, "x")),
+                c("\"timestamp\",\"X\"",
+                  "16436,1",
+                  "16802,11",
+                  "16803,12",
+                  "16804,13", 
+                  "16805,14",
+                  "16806,15",
+                  "16807,16"))
 
+    ans <- write_ts_table(x, dir, "X", add = TRUE)
+    checkEquals(ans, 0)
+    checkEquals(readLines(file.path(dir, "x")),
+                c("\"timestamp\",\"X\"",
+                  "16436,1",
+                  "16802,11",
+                  "16803,12",
+                  "16804,13", 
+                  "16805,14",
+                  "16806,15",
+                  "16807,16"))
+    
+    ans <- write_ts_table(x, dir, "X", add = TRUE, overwrite = TRUE)
+    checkEquals(ans, 0)
+    checkEquals(readLines(file.path(dir, "x")),
+                c("\"timestamp\",\"X\"",
+                  "16436,1",
+                  "16802,11",
+                  "16803,12",
+                  "16804,13", 
+                  "16805,14",
+                  "16806,15",
+                  "16807,16"))
+
+    ans <- write_ts_table(x, dir, "X", add = FALSE, overwrite = TRUE)
+    checkEquals(ans, 0)
+    checkEquals(readLines(file.path(dir, "x")),
+                c("\"timestamp\",\"X\"",
+                  "16436,1",
+                  "16802,11",
+                  "16803,12",
+                  "16804,13", 
+                  "16805,14",
+                  "16806,15",
+                  "16807,16"))
+
+    
     ## write an empty file
     x <- ts_table(numeric(0),
                   timestamp = Sys.Date()[0],
