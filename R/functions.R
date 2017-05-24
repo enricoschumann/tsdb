@@ -102,7 +102,7 @@ write_ts_table <- function(x, dir, file,
             ans  <- 0
             message("file exists; use ", sQuote("add = TRUE"),
                     " or ", sQuote("overwrite = TRUE"),
-                    " to change/overwrite file")
+                    " to update file")
         } else if (add && sum(new) == 0L) {
             ans  <- 0
         } else {
