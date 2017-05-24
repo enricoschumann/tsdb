@@ -65,7 +65,7 @@ write_ts_table <- function(x, dir, file,
     columns   <- .columns(x)
 
     backend <- tolower(backend)
-    ans <- dim(x)[1L] ## a ts_table is always a matrix
+    ans <- dim(x)[1L] ## ts_table is always a matrix
     if (backend == "csv") {
         dfile <- if (missing(dir))
                      file
@@ -80,7 +80,19 @@ write_ts_table <- function(x, dir, file,
                             sep = ",")
             return(invisible(0L))
         }
-        if (add) {
+        if (overwrite) {
+            in_db <- read_ts_tables(file, dir, drop.weekends = FALSE)
+            if (any(in_db$columns != columns))
+                stop("columns in file differ from columns in ", sQuote("x"))
+            keep <- !ttime(in_db$timestamp) %in% timestamp
+            timestamp <- c(ttime(in_db$timestamp)[keep], timestamp)
+            x <- rbind(in_db$data[keep, , drop = FALSE], x)
+            if (is.unsorted(timestamp)) {
+                ii <- order(timestamp)
+                timestamp <- timestamp[ii]
+                x <- x[ii, , drop = FALSE]
+            }
+        } else if (add) {
             in_db <- read_ts_tables(file, dir, drop.weekends = FALSE)
             if (any(in_db$columns != columns))
                 stop("columns in file differ from columns in ", sQuote("x"))
@@ -104,7 +116,7 @@ write_ts_table <- function(x, dir, file,
                     " or ", sQuote("overwrite = TRUE"),
                     " to update file")
         } else if (add && sum(new) == 0L) {
-            ans  <- 0
+            ans <- 0
         } else {
             write.table(as.matrix(data.frame(timestamp, unclass(x))),
                         file = dfile,

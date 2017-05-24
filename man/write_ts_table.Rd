@@ -10,28 +10,35 @@
 write_ts_table(x, dir, file, add = FALSE, overwrite = FALSE, backend = "csv")
 }
 \arguments{
+
   \item{x}{
     numeric data
-}
+  }
   \item{dir}{
     character
-}
+  }
   \item{file}{
     character
-}
+  }
   \item{add}{
-
-    logical: if TRUE, add data with timestamps that are
-    not in a file.
-
-}
+    
+    logical: if \code{TRUE}, add data with timestamps
+    that are not in a file.
+    
+  }
   \item{overwrite}{
-    logical: overwrite existing file when data differs 
+    
+    logical: overwrite existing file when data
+    differs. \code{overwrite} implies \code{add}.
+    
   }
   \item{backend}{
-    character: currently, \code{csv} and \code{monetdb} are supported
-  }
 
+    character: currently, \code{csv} and \code{monetdb}
+    are supported
+
+  }
+  
 }
 \details{
   Write files.
