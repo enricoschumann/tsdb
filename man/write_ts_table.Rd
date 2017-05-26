@@ -7,12 +7,12 @@
   Write time-series data to files.
 }
 \usage{
-write_ts_table(x, dir, file, add = FALSE, overwrite = FALSE, backend = "csv")
+write_ts_table(ts, dir, file, add = FALSE, overwrite = FALSE, backend = "csv")
 }
 \arguments{
 
-  \item{x}{
-    numeric data
+  \item{ts}{
+    a \code{ts_table}
   }
   \item{dir}{
     character

@@ -1,5 +1,10 @@
 2017-05-26  Enrico Schumann  <es@enricoschumann.net>
 
+	* R/functions.R (write_ts_table): rename first
+	element to 'ts'
+
+2017-05-26  Enrico Schumann  <es@enricoschumann.net>
+
 	* DESCRIPTION (Version): 0.4-8
 
 	* R/functions.R (write_ts_table): simplify code

@@ -53,19 +53,19 @@ ttime <- function(x, from = "datetime", to = "numeric",
 }
 
 
-write_ts_table <- function(x, dir, file,
+write_ts_table <- function(ts, dir, file,
                            add = FALSE, overwrite = FALSE,
                            backend = "csv") {
-    if (!(inherits(x, "ts_table")))
-        stop(sQuote("x"), " must be a ts_table")
+    if (!(inherits(ts, "ts_table")))
+        stop(sQuote("ts"), " must be a ", sQuote("ts_table"))
 
     save.scipen <- options(scipen = 1e5)
     on.exit(options(scipen = save.scipen))
-    timestamp <- ttime(.timestamp(x))
-    columns   <- .columns(x)
+    timestamp <- ttime(.timestamp(ts))
+    columns   <- .columns(ts)
 
     backend <- tolower(backend)
-    ans <- dim(x)[1L] ## ts_table is always a matrix
+    ans <- dim(ts)[1L] ## ts_table is always a matrix
     if (backend == "csv") {
         dfile <- if (missing(dir))
                      file
@@ -73,7 +73,7 @@ write_ts_table <- function(x, dir, file,
                      file.path(dir, file)
         if (ans == 0L) {
             if (!file.exists(dfile))
-                write.table(as.matrix(data.frame(timestamp, unclass(x))),
+                write.table(as.matrix(data.frame(timestamp, unclass(ts))),
                             file = dfile,
                             row.names = FALSE,
                             col.names = c("timestamp", columns),
@@ -83,30 +83,30 @@ write_ts_table <- function(x, dir, file,
         if (overwrite) {
             in_db <- read_ts_tables(file, dir, drop.weekends = FALSE)
             if (any(in_db$columns != columns))
-                stop("columns in file differ from columns in ", sQuote("x"))
+                stop("columns in file differ from columns in ", sQuote("ts"))
             keep <- !ttime(in_db$timestamp) %in% timestamp
             timestamp <- c(ttime(in_db$timestamp)[keep], timestamp)
-            x <- rbind(in_db$data[keep, , drop = FALSE], x)
+            ts <- rbind(in_db$data[keep, , drop = FALSE], ts)
             if (is.unsorted(timestamp)) {
                 ii <- order(timestamp)
                 timestamp <- timestamp[ii]
-                x <- x[ii, , drop = FALSE]
+                ts <- ts[ii, , drop = FALSE]
             }
         } else if (add) {
             in_db <- read_ts_tables(file, dir, drop.weekends = FALSE)
             if (any(in_db$columns != columns))
-                stop("columns in file differ from columns in ", sQuote("x"))
+                stop("columns in file differ from columns in ", sQuote("ts"))
             new <- !timestamp %in% ttime(in_db$timestamp)
             ans <- 0L
             if (any(new)) {
                 ans <- sum(new)
                 timestamp <- c(ttime(in_db$timestamp),
                                timestamp[new])
-                x <- rbind(in_db$data, x[new, ,drop = FALSE])
+                ts <- rbind(in_db$data, ts[new, ,drop = FALSE])
                 if (is.unsorted(timestamp)) {
                     ii <- order(timestamp)
                     timestamp <- timestamp[ii]
-                    x <- x[ii, , drop = FALSE]
+                    ts <- ts[ii, , drop = FALSE]
                 }
             }
         }
@@ -120,7 +120,7 @@ write_ts_table <- function(x, dir, file,
             ##   e.g., if 'add' was true but no new data were
             ##   found, there is no need to rewrite the table
             
-            write.table(as.matrix(data.frame(timestamp, unclass(x))),
+            write.table(as.matrix(data.frame(timestamp, unclass(ts))),
                         file = dfile,
                         row.names = FALSE,
                         col.names = c("timestamp", columns),
@@ -133,7 +133,7 @@ write_ts_table <- function(x, dir, file,
             on.exit(dbDisconnect(dir, shutdown = TRUE))
         }
         
-        df <- data.frame(timestamp, unclass(x))
+        df <- data.frame(timestamp, unclass(ts))
         colnames(df) <- c("timestamp", columns)
         dbWriteTable(dir, dbQuoteIdentifier(dir, file), df,
                      overwrite = overwrite)
@@ -329,9 +329,6 @@ print.file_info <- function(x, ...) {
     print(x, ...)
 }
 
-update_ts_table <- function(x, timestamp, type, file)
-    .NotYetImplemented()
-
 ts_table <- function(data, timestamp, columns) {
     if (!inherits(timestamp, "Date") &&
         !inherits(timestamp, "POSIXt"))
@@ -437,3 +434,6 @@ print.ts_table <- function(x, ...) {
     invisible(x)
 }
 
+adjust_ts_table <- function(ts, dividends, splits, splits.first = TRUE) {
+
+}
