@@ -91,9 +91,9 @@ test.read_ts_tables <- function() {
 
 test.write_ts_table <- function() {
 
-    require("RUnit")
-    require("tsdb")
-    require("zoo")
+    ## require("RUnit")
+    ## require("tsdb")
+    ## require("zoo")
     dir <- tempdir()
 
     x <- ts_table(data = 11:15,
@@ -244,7 +244,7 @@ test.write_ts_table <- function() {
     checkEquals(ans, 1)
     checkEquals(readLines(file.path(dir, "x")),
                 c("\"timestamp\",\"X\"",
-                  "16436,2",  ## value remains unchanged
+                  "16436,2",  ## value is changed because of 'overwrite'
                   "16802,11",
                   "16803,12",
                   "16804,13", 

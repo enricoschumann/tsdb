@@ -97,7 +97,7 @@ write_ts_table <- function(x, dir, file,
             if (any(in_db$columns != columns))
                 stop("columns in file differ from columns in ", sQuote("x"))
             new <- !timestamp %in% ttime(in_db$timestamp)
-            ans <- 0
+            ans <- 0L
             if (any(new)) {
                 ans <- sum(new)
                 timestamp <- c(ttime(in_db$timestamp),
@@ -115,9 +115,11 @@ write_ts_table <- function(x, dir, file,
             message("file exists; use ", sQuote("add = TRUE"),
                     " or ", sQuote("overwrite = TRUE"),
                     " to update file")
-        } else if (add && sum(new) == 0L) {
-            ans <- 0
-        } else {
+        } else if (ans > 0L) {
+            ## only write if there are rows (ans > 0):
+            ##   e.g., if 'add' was true but no new data were
+            ##   found, there is no need to rewrite the table
+            
             write.table(as.matrix(data.frame(timestamp, unclass(x))),
                         file = dfile,
                         row.names = FALSE,
