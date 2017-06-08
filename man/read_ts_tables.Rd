@@ -11,7 +11,7 @@ read_ts_tables(file, dir, t.type = "guess",
                start, end, columns,
                return.class = NULL,
                drop.weekends = TRUE,
-               column.name = "\%dir\%/\%file\%::\%column\%",
+               column.names = "\%dir\%/\%file\%::\%column\%",
                backend = "csv")
 }
 \arguments{
@@ -39,7 +39,7 @@ read_ts_tables(file, dir, t.type = "guess",
   \item{drop.weekends}{
     logical
 }
-  \item{column.name}{
+  \item{column.names}{
 
     character: a format string for column names; may contain
     \code{\%dir\%}, \code{\%file\%}, and \code{\%column\%}

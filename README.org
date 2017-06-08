@@ -422,11 +422,20 @@ In read_ts_tables(c("example1", "example2"), dir = "~/tsdb/daily",  :
 
 ** ts_tables
 
-   tsdb works with /time-series tables/ (=ts_tables=). These are
-   numeric matrices, so there is always a =dim= attribute. Attached to
-   this matrix are several attributes: 
+   tsdb works with /time-series tables/
+   (=ts_tables=). These are numeric matrices, so there
+   is always a =dim= attribute. For a time-series table
+   =x=, you get the number of observations with =dim(x)[[1]]=
 
-- timestamp :: the numeric representation of the timestamp
+   Attached to this matrix are several attributes:
+
+- timestamp :: the timestamp, which can be either of class Date or of
+               class =POSIXct=
+- columns :: a character vector that provides the columns names
+
+(There may be other attributes as well, but these two
+are always present.)
+
 
 ** The file format
 

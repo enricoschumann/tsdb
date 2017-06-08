@@ -1,3 +1,8 @@
+2017-06-08  Enrico Schumann  <es@enricoschumann.net>
+
+	* R/functions.R (read_ts_tables): rename
+	argument 'column.name' to 'column.names' (plural)
+
 2017-05-26  Enrico Schumann  <es@enricoschumann.net>
 
 	* R/functions.R (write_ts_table): rename first

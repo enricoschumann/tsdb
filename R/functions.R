@@ -147,7 +147,7 @@ read_ts_tables <- function(file, dir, t.type = "guess",
                            start, end, columns,
                            return.class = NULL,
                            drop.weekends = TRUE,
-                           column.name = "%dir%/%file%::%column%",
+                           column.names = "%dir%/%file%::%column%",
                            backend = "csv") {
 
     backend <- tolower(backend)
@@ -243,7 +243,7 @@ read_ts_tables <- function(file, dir, t.type = "guess",
         rm <- rowSums(is.na(results)) == dim(results)[[2L]]
         results <- results[!rm, ,drop = FALSE]
         timestamp <- timestamp[!rm]
-        colnames <- rep.int(column.name, dim(results)[[2L]])
+        colnames <- rep.int(column.names, dim(results)[[2L]])
         .dir <- rep(dir, each = length(columns))
         .file <- rep(file, each = length(columns))
         .columns <- rep(columns, length(.dir)/length(columns))
