@@ -345,14 +345,15 @@ ts_table <- function(data, timestamp, columns) {
     ## TODO if character, match regexp and then coerce
     ##      to Date/POSIXct?
     if (inherits(timestamp, "POSIXlt")) {
-        timestamp <- c(as.POSIXct(timestamp))
+        timestamp <- ttime(as.POSIXct(timestamp))
         t.type <- "POSIXct"
     }
     if (inherits(timestamp, "POSIXct")) {
-        timestamp <- c(timestamp)
+        timestamp <- ttime(timestamp)
         t.type <- "POSIXct"
     }
     if (inherits(timestamp, "Date")) {
+        timestamp <- ttime(timestamp)
         t.type <- "Date"
     }
     ans <- as.matrix(data)
@@ -366,7 +367,7 @@ ts_table <- function(data, timestamp, columns) {
     if (is.unsorted(timestamp)) {
         ii <- order(timestamp)
         timestamp <- timestamp[ii]
-        ans <- ans[ii, ,drop = FALSE]
+        ans <- ans[ii, , drop = FALSE]
     }
     attr(ans, "timestamp") <- timestamp
     attr(ans, "t.type") <- t.type
