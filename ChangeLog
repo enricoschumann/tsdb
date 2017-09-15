@@ -1,3 +1,14 @@
+2017-09-14  Enrico Schumann  <es@enricoschumann.net>
+
+	* R/functions.R (file_info): return more
+	information about files; the function also does
+	not fail anymore if a file does not exist, but
+	reports the file as missing
+	(write_ts_table): fix add/overwrite: when these
+	options were TRUE but the file did not exist,
+	the function raised an error. Now the data are
+	written.
+
 2017-06-08  Enrico Schumann  <es@enricoschumann.net>
 
 	* R/functions.R (read_ts_tables): rename

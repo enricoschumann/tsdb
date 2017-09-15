@@ -80,7 +80,8 @@ write_ts_table <- function(ts, dir, file,
                             sep = ",")
             return(invisible(0L))
         }
-        if (overwrite) {
+        dfile.exists <- file.exists(dfile)
+        if (dfile.exists && overwrite) {
             in_db <- read_ts_tables(file, dir, drop.weekends = FALSE)
             if (any(in_db$columns != columns))
                 stop("columns in file differ from columns in ", sQuote("ts"))
@@ -92,7 +93,7 @@ write_ts_table <- function(ts, dir, file,
                 timestamp <- timestamp[ii]
                 ts <- ts[ii, , drop = FALSE]
             }
-        } else if (add) {
+        } else if (dfile.exists && add) {
             in_db <- read_ts_tables(file, dir, drop.weekends = FALSE)
             if (any(in_db$columns != columns))
                 stop("columns in file differ from columns in ", sQuote("ts"))
@@ -110,7 +111,7 @@ write_ts_table <- function(ts, dir, file,
                 }
             }
         }
-        if (file.exists(dfile) && !overwrite && !add) {
+        if (dfile.exists && !overwrite && !add) {
             ans  <- 0
             message("file exists; use ", sQuote("add = TRUE"),
                     " or ", sQuote("overwrite = TRUE"),
@@ -308,14 +309,22 @@ file_info <- function(dir, file) {
                  file.path(dir, file)
 
     nf <- length(dfile)
-    res <- data.frame(dir_file = dfile,
+    res <- data.frame(file = file,
+                      dir_file = dfile,
+                      exists = file.exists(dfile),
                       columns = character(nf),
-                      min_timestamp = numeric(nf),
-                      max_timestamp = numeric(nf),
+                      nrows = NA,
+                      min_timestamp = -Inf,
+                      max_timestamp =  Inf,
                       stringsAsFactors = FALSE)
                       
     for (i in seq_len(nf)) {
+        if (!res[["exists"]][i])
+            next
         fi <- try(read_ts_tables(dfile[i]), silent = TRUE)
+        if (inherits(fi, "try-error"))
+            next
+        res[["nrows"]][i] <- length(fi$timestamp)
         res[["min_timestamp"]][i] <- suppressWarnings(min(fi$timestamp))
         res[["max_timestamp"]][i] <- suppressWarnings(max(fi$timestamp))
     }
