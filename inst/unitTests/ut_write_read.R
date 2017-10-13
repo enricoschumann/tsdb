@@ -2,8 +2,8 @@
 
 test.ts_table <- function() {
 
-    require("RUnit")
-    require("tsdb")
+    ## require("RUnit")
+    ## require("tsdb")
     require("zoo")
     y <- ts_table(11:15, as.Date("2016-1-1")-5:1, "close")
 
@@ -173,6 +173,8 @@ test.write_ts_table <- function() {
                   "16806,15",
                   "16807,16"))
 
+
+    ## writing an empty ts_table does no harm
     x <- ts_table(numeric(0),
                   timestamp = Sys.Date()[0],
                   columns = "x")
