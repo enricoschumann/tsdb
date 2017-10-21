@@ -426,7 +426,7 @@ as.matrix.ts_table <- function(x, ...) {
 print.ts_table <- function(x, ...) {
     tmp <- .timestamp(x)
     from_to <- if (length(tmp))
-                   range(tmp)
+                   ttime(range(tmp), "numeric", .t.type(x))
                else
                    c(NA, NA)
     if (nrow(x))
