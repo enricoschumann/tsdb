@@ -2,16 +2,15 @@
 
 test.ts_table <- function() {
 
-    ## require("RUnit")
-    ## require("tsdb")
+    require("RUnit")
+    require("tsdb")
     require("zoo")
     y <- ts_table(11:15, as.Date("2016-1-1")-5:1, "close")
 
     checkEquals(y,
                 structure(11:15,
                           .Dim = c(5L, 1L),
-                          timestamp = structure(c(16796, 16797, 16798, 16799, 16800),
-                                                class = "Date"),
+                          timestamp = c(16796, 16797, 16798, 16799, 16800),
                           t.type = "Date",
                           columns = "close",
                           class = "ts_table"))
@@ -29,8 +28,7 @@ test.ts_table <- function() {
     checkEquals(y,
                 structure(11:15,
                           .Dim = c(5L, 1L),
-                          timestamp = structure(c(16796, 16797, 16798, 16799, 16800),
-                                                class = "Date"),
+                          timestamp = c(16796, 16797, 16798, 16799, 16800),
                           t.type = "Date",
                           columns = "close",
                           class = "ts_table"))
@@ -41,10 +39,9 @@ test.ts_table <- function() {
                   "close")
     checkEquals(y,
                 structure(11:15, .Dim = c(5L, 1L),
-                          timestamp = structure(c(1451642400, 1451642401,
-                                                  1451642402, 1451642403,
-                                                  1451642404),
-                                                class = c("POSIXct", "POSIXt")),
+                          timestamp = c(1451642400, 1451642401,
+                                        1451642402, 1451642403,
+                                        1451642404),
                           t.type = "POSIXct",
                           columns = "close",
                           class = "ts_table"))
@@ -262,4 +259,24 @@ test.write_ts_table <- function() {
     ans <- write_ts_table(x, dir, "EMPTY_FILE")
     checkEquals(ans, 0)
     checkTrue(file.exists(file.path(dir, "EMPTY_FILE")))
+}
+
+test.zoo <- function() {
+
+    require("RUnit")
+    require("tsdb")
+    require("zoo")
+
+    y <- ts_table(11:15, as.Date("2016-1-1")-5:1, "close")
+    checkEqualsNumeric(zoo::as.zoo(y),
+                       zoo::zoo(as.matrix(y), as.Date("2016-1-1")-5:1))
+
+    y <- zoo(11:15, as.Date("2016-1-1")-5:1)
+    checkEquals(as.ts_table(y, columns = "close"),
+                structure(11:15,
+                          .Dim = c(5L, 1L),
+                          timestamp = c(16796, 16797, 
+                                        16798, 16799, 16800),
+                          t.type = "Date", columns = "close",
+                          class = "ts_table"))
 }
