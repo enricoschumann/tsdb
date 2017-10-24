@@ -5,7 +5,7 @@
 ## ---------------- time 
 
 ttime <- function(x, from = "datetime", to = "numeric",
-                  tz = "", strip.attr = FALSE,
+                  tz = "", strip.attr = TRUE,
                   format = "%Y-%m-%d") {
     
     if (from == "datetime" && to == "numeric") {
@@ -390,7 +390,8 @@ as.ts_table.zoo <- function(x, columns, ...) {
 }
 
 as.zoo.ts_table <- function(x, ...) {
-    ans <- zoo(unname(as.matrix(x)), .timestamp(x))
+    ans <- zoo(unname(as.matrix(x)),
+               ttime(.timestamp(x), "numeric", .t.type(x)))
     colnames(ans) <- .columns(x)
     ans
 }
@@ -419,7 +420,9 @@ as.matrix.ts_table <- function(x, ...) {
         ans <- c(x)
         dim(ans) <- d
         colnames(ans) <- col
-        rownames(ans) <- as.character(ttime(timestamp, from = "numeric", to = .t.type(x)))
+        rownames(ans) <- as.character(ttime(timestamp,
+                                            from = "numeric",
+                                            to = .t.type(x)))
         ans
 }
 
