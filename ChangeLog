@@ -1,5 +1,7 @@
 2017-10-24  Enrico Schumann  <es@enricoschumann.net>
 
+	* DESCRIPTION (Version): Version: 0.5-0
+
 	* R/functions.R (ts_table): store timestamp as
 	numeric (which reverts the change introduced in
 	version 0.4-7; see ChangeLog 2017-05-22)
