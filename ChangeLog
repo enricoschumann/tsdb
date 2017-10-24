@@ -1,5 +1,9 @@
 2017-10-24  Enrico Schumann  <es@enricoschumann.net>
 
+	* R/functions.R (ts_table): store timestamp as
+	numeric (which reverts the change introduced in
+	version 0.4-7; see ChangeLog 2017-05-22)
+
 	* R/functions.R (as.zoo.ts_table): fix method
 
 	* inst/unitTests/ut_write_read.R
