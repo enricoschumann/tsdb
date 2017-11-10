@@ -115,7 +115,7 @@
 * About tsdb
 
 A terribly-simple data base for time series. All series
-are saved as csv files. The package offers utilities
+are saved as CSV files. The package offers utilities
 for saving files in a standardised format, and for
 retrieving and joining data.
 
@@ -436,11 +436,16 @@ In read_ts_tables(c("example1", "example2"), dir = "~/tsdb/daily",  :
 (There may be other attributes as well, but these two
 are always present.)
 
+A =ts_table= are not meant as a time-series class. For
+most computations (plotting, calculation of statistics,
+etc), the =ts_table= must first be coerced to zoo, xts,
+dataframe or a similar data structure.
+
 
 ** The file format
 
 tsdb can store and load time-series data. The format it
-uses is plain csv; a sample file my look as follows:
+uses is plain CSV; a sample file my look as follows:
 
 #+BEGIN_EXAMPLE
   "timestamp","close"
@@ -457,28 +462,13 @@ named =timestamp=.
 
 The advantage of this plain format is that the data are
 in no way dependent on =tsdb=. The files can be used
-and manipulated by other software as well. For
-instance, if the above example is is stored in an
-appropriately named file =example=, we would reverse
-the order of the timestamps in a shell such as =bash=.
-
-#+BEGIN_SRC sh :results output
-  head -1 example; tail -n +2 example | sort -r
-#+END_SRC
-
-#+BEGIN_EXAMPLE
-  "timestamp","close"
-  17135,15
-  17134,14
-  17133,13
-  17132,12
-  17131,11
-#+END_EXAMPLE
-
+and manipulated by other software as well.
 
 ** Timestamps
   :PROPERTIES:
   :CUSTOM_ID: sec:timestamps
   :END:
 
-
+Daily timestamps are represented as the number of days
+since 1 Jan 1970; intraday timestamps are the number of
+seconds since 1 Jan 1970.
