@@ -314,22 +314,24 @@ file_info <- function(dir, file) {
                       exists = file.exists(dfile),
                       columns = character(nf),
                       nrows = NA,
-                      min_timestamp = -Inf,
-                      max_timestamp =  Inf,
+                      t.type = NA,
+                      min.timestamp = NA,
+                      max.timestamp = NA,
                       stringsAsFactors = FALSE)
                       
     for (i in seq_len(nf)) {
         if (!res[["exists"]][i])
             next
-        fi <- try(read_ts_tables(dfile[i]), silent = TRUE)
+        fi <- try(read_ts_tables(dfile[i], return.class = NULL), silent = TRUE)
         if (inherits(fi, "try-error"))
             next
         res[["nrows"]][i] <- length(fi$timestamp)
-        res[["min_timestamp"]][i] <- suppressWarnings(min(fi$timestamp))
-        res[["max_timestamp"]][i] <- suppressWarnings(max(fi$timestamp))
+        if (length(fi$timestamp)) {
+            res[["min.timestamp"]][i] <- min(fi$timestamp)
+            res[["max.timestamp"]][i] <- max(fi$timestamp)
+            res[["t.type"]][i] <- class(fi$timestamp)
+        }
     }
-    res[["min_timestamp"]][!is.finite(res[["min_timestamp"]])] <- NA
-    res[["max_timestamp"]][!is.finite(res[["max_timestamp"]])] <- NA
     class(res) <- c("file_info", "data.frame")
     res
 }

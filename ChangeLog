@@ -1,3 +1,8 @@
+2017-11-14  Enrico Schumann  <es@enricoschumann.net>
+
+	* R/functions.R (file_info): simplify code;
+	return 't.type'
+
 2017-10-24  Enrico Schumann  <es@enricoschumann.net>
 
 	* DESCRIPTION (Version): Version: 0.5-0
