@@ -7,7 +7,8 @@
   Write time-series data to files.
 }
 \usage{
-write_ts_table(ts, dir, file, add = FALSE, overwrite = FALSE, backend = "csv")
+write_ts_table(ts, dir, file, add = FALSE, overwrite = FALSE,
+               replace.file = FALSE, backend = "csv")
 }
 \arguments{
 
@@ -30,6 +31,12 @@ write_ts_table(ts, dir, file, add = FALSE, overwrite = FALSE, backend = "csv")
     
     logical: overwrite existing file when data
     differs. \code{overwrite} implies \code{add}.
+    
+  }
+  \item{replace.file}{
+    
+    logical: if \code{TRUE}, an existing file is deleted
+    and replaced by a new file (i.e. containing \code{ts}))
     
   }
   \item{backend}{

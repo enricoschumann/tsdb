@@ -1,3 +1,10 @@
+2017-11-16  Enrico Schumann  <es@enricoschumann.net>
+
+	* R/functions.R (write_ts_table): new argument
+	'replace.file', with default FALSE. If TRUE,
+	the specified file is *deleted* and then
+	replaced by the new ts_table
+
 2017-11-14  Enrico Schumann  <es@enricoschumann.net>
 
 	* R/functions.R (file_info): simplify code;

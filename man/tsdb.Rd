@@ -13,7 +13,7 @@
 }
 \usage{
 ttime(x, from = "datetime", to = "numeric", tz = "",
-      strip.attr = FALSE, format = "\%Y-\%m-\%d")
+      strip.attr = TRUE, format = "\%Y-\%m-\%d")
 }
 \arguments{
   \item{x}{
@@ -29,7 +29,7 @@ ttime(x, from = "datetime", to = "numeric", tz = "",
     character
 }
   \item{strip.attr}{
-    logical
+    logical: strip attributes; in particular, timezone information
 }
   \item{format}{
     character

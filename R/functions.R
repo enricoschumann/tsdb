@@ -54,7 +54,9 @@ ttime <- function(x, from = "datetime", to = "numeric",
 
 
 write_ts_table <- function(ts, dir, file,
-                           add = FALSE, overwrite = FALSE,
+                           add = FALSE,
+                           overwrite = FALSE,
+                           replace.file = FALSE,
                            backend = "csv") {
     if (!(inherits(ts, "ts_table")))
         stop(sQuote("ts"), " must be a ", sQuote("ts_table"))
@@ -71,6 +73,9 @@ write_ts_table <- function(ts, dir, file,
                      file
                  else
                      file.path(dir, file)
+        if (replace.file) {
+            file.remove(dfile)
+        }
         if (ans == 0L) {
             if (!file.exists(dfile))
                 write.table(as.matrix(data.frame(timestamp, unclass(ts))),
@@ -450,5 +455,10 @@ print.ts_table <- function(x, ...) {
 }
 
 adjust_ts_table <- function(ts, dividends, splits, splits.first = TRUE) {
+
+}
+
+rm_ts_table <- function(file, dir, ..., trash.bin = ".trash.bin") {
+    
 
 }
