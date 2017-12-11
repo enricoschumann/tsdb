@@ -2,12 +2,12 @@
 ## R package 'database'.
 ## Copyright Enrico Schumann 2010-2017
 
-## ---------------- time 
+## ---------------- time
 
 ttime <- function(x, from = "datetime", to = "numeric",
                   tz = "", strip.attr = TRUE,
                   format = "%Y-%m-%d") {
-    
+
     if (from == "datetime" && to == "numeric") {
         if (strip.attr)
             c(unclass(x)) else unclass(x)
@@ -125,7 +125,6 @@ write_ts_table <- function(ts, dir, file,
             ## only write if there are rows (ans > 0):
             ##   e.g., if 'add' was true but no new data were
             ##   found, there is no need to rewrite the table
-            
             write.table(as.matrix(data.frame(timestamp, unclass(ts))),
                         file = dfile,
                         row.names = FALSE,
@@ -138,12 +137,12 @@ write_ts_table <- function(ts, dir, file,
             dir <- dbConnect(MonetDBLite::MonetDBLite(), dir)
             on.exit(dbDisconnect(dir, shutdown = TRUE))
         }
-        
+
         df <- data.frame(timestamp, unclass(ts))
         colnames(df) <- c("timestamp", columns)
         dbWriteTable(dir, dbQuoteIdentifier(dir, file), df,
                      overwrite = overwrite)
-        
+
     } else
         stop("unknown backend")
     invisible(ans)
@@ -158,7 +157,6 @@ read_ts_tables <- function(file, dir, t.type = "guess",
 
     backend <- tolower(backend)
 
-    
     if (backend == "csv") {
     ### ****************
 
@@ -168,18 +166,18 @@ read_ts_tables <- function(file, dir, t.type = "guess",
         } else {
             dfile <- file.path(dir, file)
         }
-        
-        
+
+
         if (length(dir) != length(file)) {
             if (length(dir) > 1L && length(file) > 1L)
                 stop("file and dir lengths must match")
-            
+
             if (length(file) > 1L) {
                 dir <-  rep.int(dir, length(file))
             } else if (length(dir) > 1L)
                 file <- rep.int(file, length(dir))
             else
-                stop("check lengths of file and dir")        
+                stop("check lengths of file and dir")
         }
 
         if (t.type == "guess" || missing(columns))
@@ -198,18 +196,18 @@ read_ts_tables <- function(file, dir, t.type = "guess",
                         strsplit(samp[[1]], ",", fixed = TRUE)[[1]])
             columns <- tmp[-1L]
         }
-        
+
         if (t.type == "Date") {
             start <- if (missing(start))
                          as.Date("1970-01-01")
                      else
                          as.Date(start)
-            
+
             end   <- if (missing(end))
                          previous_businessday(Sys.Date())
                      else
                          as.Date(end)
-            
+
             timestamp <- seq(start, end , "1 day")
             if (drop.weekends)
                 timestamp <- timestamp[is_businessday(timestamp)]
@@ -219,7 +217,7 @@ read_ts_tables <- function(file, dir, t.type = "guess",
                          as.POSIXct(Sys.Date() - 365)
                      else
                          as.POSIXct(start)
-            
+
             if (missing(end))
                 end <- as.POSIXct(previous_businessday(Sys.Date()))
             else
@@ -227,20 +225,21 @@ read_ts_tables <- function(file, dir, t.type = "guess",
             timestamp <- seq(start, end , "1 sec")
         } else
             stop("unknown ", sQuote("t.type"))
-        
+
         nc <- length(columns)
         results <- array(NA_real_,
                          dim = c(length(timestamp), length(dfile)*nc))
         for (i in seq_along(dfile)) {
             tmp <- read.table(dfile[[i]], sep = ",",
-                              stringsAsFactors = FALSE,                           
+                              stringsAsFactors = FALSE,
                               header = TRUE, colClasses = "numeric")
             ii <- fmatch(tmp[[1L]], timestamp, nomatch = 0L)
             tmp.names <- colnames(tmp)
             if (!all(columns %in% tmp.names)) {
                 warning("columns missing")
                 tmp <- cbind(tmp, rep(NA, sum(!(columns %in% tmp.names))))
-                colnames(tmp) <- c(tmp.names, columns[!(columns %in% tmp.names)])            
+                colnames(tmp) <- c(tmp.names,
+                                   columns[!(columns %in% tmp.names)])
             }
             res <- tmp[ , columns, drop = FALSE][ii > 0L, ]
             if (!is.null(res))
@@ -258,7 +257,7 @@ read_ts_tables <- function(file, dir, t.type = "guess",
             colnames[[i]] <- gsub("%file%",   .file[[i]],    colnames[[i]])
             colnames[[i]] <- gsub("%column%", .columns[[i]], colnames[[i]])
         }
-        
+
     } else if (backend == "monetdb") {
            ### ********************
 
@@ -266,9 +265,9 @@ read_ts_tables <- function(file, dir, t.type = "guess",
             dir <- dbConnect(MonetDBLite::MonetDBLite(), dir)
             on.exit(dbDisconnect(dir, shutdown = TRUE))
         }
-        
+
         dbGetQuery(dir, "SELECT * FROM file;")
-        
+
     } else
         stop("unknown backend")
 
@@ -289,7 +288,7 @@ read_ts_tables <- function(file, dir, t.type = "guess",
         ans
     } else {
         stop("unknown ", sQuote("return.class"))
-    }        
+    }
 }
 
 ## x <- scan("~/tsdb/daily/cmcier", what= list(numeric(0), numeric(0)),
@@ -323,7 +322,7 @@ file_info <- function(dir, file) {
                       min.timestamp = NA,
                       max.timestamp = NA,
                       stringsAsFactors = FALSE)
-                      
+
     for (i in seq_len(nf)) {
         if (!res[["exists"]][i])
             next
@@ -409,14 +408,14 @@ as.data.frame.ts_table <- function(x,
         timestamp <- attr(x, "timestamp")
         col <- attr(x, "columns")
         if (!is.null(row.names)) {
-            ans <- data.frame(unclass(x), stringsAsFactors = FALSE)            
+            ans <- data.frame(unclass(x), stringsAsFactors = FALSE)
             row.names(ans) <- as.character(timestamp)
             names(ans) <- col
         } else {
             ans <- cbind(timestamp = timestamp,
                          data.frame(unclass(x), stringsAsFactors = FALSE))
-            names(ans) <- c("timestamp", col)            
-        }        
+            names(ans) <- c("timestamp", col)
+        }
         ans
 }
 
@@ -442,15 +441,14 @@ print.ts_table <- function(x, ...) {
     if (nrow(x))
         cat(nrow(x), " rows [",
             as.character(from_to[[1L]]), " -> ",
-            as.character(from_to[[2]]), 
-            "]: ", 
+            as.character(from_to[[2]]),
+            "]: ",
             paste(attr(x, "columns"), collapse = ", "),
             "\n", sep = "")
     else
-        cat(nrow(x), " rows : ", 
+        cat(nrow(x), " rows : ",
             paste(attr(x, "columns"), collapse = ", "),
             "\n", sep = "")
-        
     invisible(x)
 }
 
@@ -459,6 +457,5 @@ adjust_ts_table <- function(ts, dividends, splits, splits.first = TRUE) {
 }
 
 rm_ts_table <- function(file, dir, ..., trash.bin = ".trash.bin") {
-    
 
 }
