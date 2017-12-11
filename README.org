@@ -429,23 +429,29 @@ In read_ts_tables(c("example1", "example2"), dir = "~/tsdb/daily",  :
 
    Attached to this matrix are several attributes:
 
-- timestamp :: the timestamp, which can be either of class Date or of
-               class =POSIXct=
+- timestamp :: a vector: the numeric representation of the timestamp, 
+- t.type :: character: the class of the original timestamp, either
+            =Date= or =POSIXct=
 - columns :: a character vector that provides the columns names
 
-(There may be other attributes as well, but these two
+(There may be other attributes as well, but these three
 are always present.)
 
 A =ts_table= are not meant as a time-series class. For
 most computations (plotting, calculation of statistics,
 etc), the =ts_table= must first be coerced to zoo, xts,
-dataframe or a similar data structure.
+dataframe or a similar data structure. Methods that
+perform such coercions are responsible for converting
+the numeric timestamp vector to an actual
+timestamp. For this, they may use the internal function
+=ttime= (translate time).
 
 
 ** The file format
 
-tsdb can store and load time-series data. The format it
-uses is plain CSV; a sample file my look as follows:
+   tsdb can store and load time-series data. The format
+   it uses is plain CSV; a sample file my look as
+   follows:
 
 #+BEGIN_EXAMPLE
   "timestamp","close"
@@ -456,19 +462,23 @@ uses is plain CSV; a sample file my look as follows:
   17135,15
 #+END_EXAMPLE
 
-Thus, the file has a header line that gives the names
-of the columns, with the first column always being
-named =timestamp=.
+   Thus, the file has a header line that gives the
+   names of the columns, with the first column always
+   being named =timestamp=.
 
 The advantage of this plain format is that the data are
 in no way dependent on =tsdb=. The files can be used
 and manipulated by other software as well.
+
 
 ** Timestamps
   :PROPERTIES:
   :CUSTOM_ID: sec:timestamps
   :END:
 
-Daily timestamps are represented as the number of days
-since 1 Jan 1970; intraday timestamps are the number of
-seconds since 1 Jan 1970.
+  Two types of timestamps are supported: =Date= and
+  =POSXIct=. As part of a =ts_table=, timestamps are
+  always stored in their numeric representation: Daily
+  timestamps are represented as the number of days
+  since 1 Jan 1970; intraday timestamps are the number
+  of seconds since 1 Jan 1970.
