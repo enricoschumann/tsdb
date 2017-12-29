@@ -3,6 +3,7 @@ export(
     file_info,
     read_ts_tables,
     ts_table,
+    ttime,
     write_ts_table
        )
 

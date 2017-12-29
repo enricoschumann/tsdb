@@ -1,3 +1,7 @@
+2017-12-11  Enrico Schumann  <es@enricoschumann.net>
+
+	* NAMESPACE: export 'ttime'
+
 2017-11-16  Enrico Schumann  <es@enricoschumann.net>
 
 	* R/functions.R (write_ts_table): new argument
@@ -8,7 +12,7 @@
 2017-11-14  Enrico Schumann  <es@enricoschumann.net>
 
 	* R/functions.R (file_info): simplify code;
-	return 't.type'
+	return 't.type' as part of file information
 
 2017-10-24  Enrico Schumann  <es@enricoschumann.net>
 
