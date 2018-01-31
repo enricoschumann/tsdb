@@ -185,7 +185,16 @@ tables in a classical database.
 #+END_SRC
 
 The written file will look like this: 
-#+INCLUDE: ~/tsdb/daily/example1 example
+# +INCLUDE: ~/tsdb/daily/example1 example
+
+#+BEGIN_EXAMPLE
+"timestamp","A"
+16801,1
+16802,2
+16803,3
+16804,4
+16805,5
+#+END_EXAMPLE
 
 You may notice that the dates been replaced by
 numbers. The mapping between these numbers and calendar
@@ -202,7 +211,7 @@ x
 #+END_SRC
 
 #+RESULTS:
-#+begin_example 
+#+begin_example
        A  B
  [1,]  1 11
  [2,]  2 12
@@ -243,9 +252,21 @@ We write the data to a file =example2=.
 #+END_SRC
 
 The written file looks like this:
-#+INCLUDE: ~/tsdb/daily/example2 example
+# +INCLUDE: ~/tsdb/daily/example2 example
 
-
+#+BEGIN_EXAMPLE
+"timestamp","B","A"
+16801,1,11
+16802,2,12
+16803,3,13
+16804,4,14
+16805,5,15
+16806,6,16
+16807,7,17
+16808,8,18
+16809,9,19
+16810,10,20
+#+END_EXAMPLE
 
 ** Reading data                                              
 
@@ -372,7 +393,7 @@ argument =column.name= specifies the format; its default is
 #+END_SRC
 
 #+RESULTS:
-#+begin_example 
+#+begin_example
     timestamp example1/A example2/A
 1  2016-01-01          1         11
 2  2016-01-02          2         12
@@ -425,7 +446,7 @@ In read_ts_tables(c("example1", "example2"), dir = "~/tsdb/daily",  :
    tsdb works with /time-series tables/
    (=ts_tables=). These are numeric matrices, so there
    is always a =dim= attribute. For a time-series table
-   =x=, you get the number of observations with =dim(x)[[1]]=
+   =x=, you get the number of observations with =dim(x)[[1]]=.
 
    Attached to this matrix are several attributes:
 
@@ -452,7 +473,7 @@ timestamp. For this, they may use the internal function
 ** The file format
 
    tsdb can store and load time-series data. The format
-   it uses is plain CSV; a sample file my look as
+   it uses is plain CSV; a sample file may look as
    follows:
 
 #+BEGIN_EXAMPLE
