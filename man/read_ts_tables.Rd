@@ -12,7 +12,8 @@ read_ts_tables(file, dir, t.type = "guess",
                return.class = NULL,
                drop.weekends = TRUE,
                column.names = "\%dir\%/\%file\%::\%column\%",
-               backend = "csv")
+               backend = "csv",
+               fread = FALSE)
 }
 \arguments{
   \item{file}{
@@ -48,6 +49,10 @@ read_ts_tables(file, dir, t.type = "guess",
   \item{backend}{
     character: currently, \code{csv} and \code{monetdb} are supported
   }
+  \item{fread}{
+    logical: use \code{\link[data.table]{fread}}
+    from package \pkg{data.table}?
+  }
 
 }
 \details{
@@ -69,7 +74,7 @@ read_ts_tables(file, dir, t.type = "guess",
 }
 \examples{
 \dontrun{
-read_ts_tables(c("table1", "table2"), dir = "/tsdb",
+read_ts_tables(c("table1", "table2"), dir = "~/tsdb",
                columns = "close",
                return.class = "zoo")}
 }

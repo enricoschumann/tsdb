@@ -1,6 +1,6 @@
 ## The package uses code from Enrico Schumann's
 ## R package 'database'.
-## Copyright Enrico Schumann 2010-2017
+## Copyright (C) Enrico Schumann 2010-2018
 
 ## ---------------- time
 
@@ -153,7 +153,8 @@ read_ts_tables <- function(file, dir, t.type = "guess",
                            return.class = NULL,
                            drop.weekends = TRUE,
                            column.names = "%dir%/%file%::%column%",
-                           backend = "csv") {
+                           backend = "csv",
+                           fread = FALSE) {
 
     backend <- tolower(backend)
 
@@ -230,9 +231,17 @@ read_ts_tables <- function(file, dir, t.type = "guess",
         results <- array(NA_real_,
                          dim = c(length(timestamp), length(dfile)*nc))
         for (i in seq_along(dfile)) {
-            tmp <- read.table(dfile[[i]], sep = ",",
-                              stringsAsFactors = FALSE,
-                              header = TRUE, colClasses = "numeric")
+            if (fread)
+                tmp <- data.table::fread(dfile[[i]],
+                                         sep = ",",
+                                         header = TRUE,
+                                         data.table = FALSE)
+            else
+                tmp <- read.table(dfile[[i]],
+                                  sep = ",",
+                                  stringsAsFactors = FALSE,
+                                  header = TRUE,
+                                  colClasses = "numeric")
             ii <- fmatch(tmp[[1L]], timestamp, nomatch = 0L)
             tmp.names <- colnames(tmp)
             if (!all(columns %in% tmp.names)) {
@@ -291,11 +300,6 @@ read_ts_tables <- function(file, dir, t.type = "guess",
     }
 }
 
-## x <- scan("~/tsdb/daily/cmcier", what= list(numeric(0), numeric(0)),
-##      skip = 1, sep = ",", multi.line=FALSE)
-## read.table("~/tsdb/daily/cmcier", colClasses = "numeric", header = TRUE)
-
-
 dir_info <- function(dir = getwd()) {
     res <- dir()
     class(res) <- "dir_info"
@@ -304,7 +308,6 @@ dir_info <- function(dir = getwd()) {
 print.dir_info <- function(x, ...) {
     print(unclass(x))
 }
-
 
 file_info <- function(dir, file) {
     dfile <- if (missing(dir))

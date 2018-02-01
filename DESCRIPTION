@@ -13,4 +13,4 @@ Description: A terribly-simple data base for time series. All
   joining data.
 License: GPL-3
 Imports: DBI, datetimeutils, fastmatch, utils, zoo
-Suggests: MonetDBLite
+Suggests: MonetDBLite, data.table
