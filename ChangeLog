@@ -1,3 +1,7 @@
+2018-02-02  Enrico Schumann  <es@enricoschumann.net>
+
+	* inst/tests/write_read.R: add timing test
+
 2017-12-11  Enrico Schumann  <es@enricoschumann.net>
 
 	* NAMESPACE: export 'ttime'
