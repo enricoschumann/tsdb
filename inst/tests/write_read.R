@@ -1,6 +1,6 @@
 ## write nf time-series to files, then read/merge them
 
-nf <- 500    ## number of files
+nf <- 1000    ## number of files
 nd <- 3700   ## number of days per time-series
 
 
