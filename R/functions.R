@@ -73,7 +73,7 @@ write_ts_table <- function(ts, dir, file,
                      file
                  else
                      file.path(dir, file)
-        if (replace.file) {
+        if (replace.file && file.exists(dfile)) {
             file.remove(dfile)
         }
         if (ans == 0L) {

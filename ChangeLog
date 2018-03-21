@@ -1,3 +1,10 @@
+2018-03-21  Enrico Schumann  <es@enricoschumann.net>
+
+	* R/functions.R (write_ts_table): with
+	replace.file set to TRUE, check whether files
+	exists before removal (this avoids the warning
+	about non-existing files)
+
 2018-02-02  Enrico Schumann  <es@enricoschumann.net>
 
 	* inst/tests/write_read.R: add timing test
