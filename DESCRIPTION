@@ -12,5 +12,5 @@ Description: A terribly-simple data base for time series. All
   saving files in a standardised format, and for retrieving and
   joining data.
 License: GPL-3
-Imports: DBI, datetimeutils, fastmatch, utils, zoo
+Imports: DBI, datetimeutils, fastmatch, iotools, utils, zoo
 Suggests: MonetDBLite

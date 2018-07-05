@@ -12,7 +12,8 @@ read_ts_tables(file, dir, t.type = "guess",
                return.class = NULL,
                drop.weekends = TRUE,
                column.names = "\%dir\%/\%file\%::\%column\%",
-               backend = "csv")
+               backend = "csv",
+               use.iotools = FALSE)
 }
 \arguments{
   \item{file}{
@@ -46,7 +47,10 @@ read_ts_tables(file, dir, t.type = "guess",
 
   }
   \item{backend}{
-    character: currently, \code{csv} and \code{monetdb} are supported
+    character: currently, \code{"csv"} and \code{"monetdb"} are supported
+  }
+  \item{use.iotools}{
+    logical
   }
 
 }

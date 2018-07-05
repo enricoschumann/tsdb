@@ -22,11 +22,17 @@ importFrom("datetimeutils",
 importFrom("fastmatch",
            "fmatch")
 
+importFrom("iotools",
+           "mstrsplit",
+           "readAsRaw")
+
 importFrom("utils",
            "read.table", "write.table")
 
 importFrom("zoo",
            "zoo", "coredata", "index", "as.zoo")
+
+
 
 S3method(print, ts_table)
 S3method(as.ts_table, zoo)

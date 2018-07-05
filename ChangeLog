@@ -1,3 +1,7 @@
+2018-07-05  Enrico Schumann  <es@enricoschumann.net>
+
+	* R/functions.R (read_ts_tables): add argument 'use.iotools'
+
 2018-03-21  Enrico Schumann  <es@enricoschumann.net>
 
 	* R/functions.R (write_ts_table): with

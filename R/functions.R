@@ -1,6 +1,6 @@
 ## The package uses code from Enrico Schumann's
 ## R package 'database'.
-## Copyright Enrico Schumann 2010-2017
+## Copyright Enrico Schumann 2010-2018
 
 ## ---------------- time
 
@@ -153,7 +153,8 @@ read_ts_tables <- function(file, dir, t.type = "guess",
                            return.class = NULL,
                            drop.weekends = TRUE,
                            column.names = "%dir%/%file%::%column%",
-                           backend = "csv") {
+                           backend = "csv",
+                           use.iotools = FALSE) {
 
     backend <- tolower(backend)
 
@@ -180,7 +181,7 @@ read_ts_tables <- function(file, dir, t.type = "guess",
                 stop("check lengths of file and dir")
         }
 
-        if (t.type == "guess" || missing(columns))
+        if (t.type == "guess" || missing(columns) || use.iotools)
             samp <- readLines(dfile[[1]], n = 2L)
         if (t.type == "guess") {
             if (length(samp) == 2L) {
@@ -191,9 +192,10 @@ read_ts_tables <- function(file, dir, t.type = "guess",
             } else
                 t.type <- "Date"
         }
-        if (missing(columns)) {
+        if (missing(columns) || use.iotools) {
             tmp <- gsub("\"", "",
                         strsplit(samp[[1]], ",", fixed = TRUE)[[1]])
+            columns_in_file <- tmp
             columns <- tmp[-1L]
         }
 
@@ -230,11 +232,19 @@ read_ts_tables <- function(file, dir, t.type = "guess",
         results <- array(NA_real_,
                          dim = c(length(timestamp), length(dfile)*nc))
         for (i in seq_along(dfile)) {
-            tmp <- read.table(dfile[[i]], sep = ",",
-                              stringsAsFactors = FALSE,
-                              header = TRUE, colClasses = "numeric")
-            ii <- fmatch(tmp[[1L]], timestamp, nomatch = 0L)
-            tmp.names <- colnames(tmp)
+            if (use.iotools) {
+                tmp <- mstrsplit(readAsRaw(dfile[[i]]),
+                                 sep = ",", skip = 1,
+                                 type = "numeric")
+                ii <- fmatch(tmp[, 1L], timestamp, nomatch = 0L)
+                colnames(tmp) <- tmp.names <- columns_in_file                
+            } else {
+                tmp <- read.table(dfile[[i]], sep = ",",
+                                  stringsAsFactors = FALSE,
+                                  header = TRUE, colClasses = "numeric")
+                ii <- fmatch(tmp[[1L]], timestamp, nomatch = 0L)
+                tmp.names <- colnames(tmp)
+            }
             if (!all(columns %in% tmp.names)) {
                 warning("columns missing")
                 tmp <- cbind(tmp, rep(NA, sum(!(columns %in% tmp.names))))
