@@ -2,9 +2,9 @@
 
 test.ts_table <- function() {
 
-    require("RUnit")
-    require("tsdb")
-    require("zoo")
+    ## require("RUnit")
+    ## require("tsdb")
+    ## require("zoo")
     y <- ts_table(11:15, as.Date("2016-1-1")-5:1, "close")
 
     checkEquals(y,
@@ -50,6 +50,9 @@ test.ts_table <- function() {
 
 test.read_ts_tables <- function() {
 
+    ## require("RUnit")
+    ## require("tsdb")
+    ## require("zoo")
     x <- ts_table(data = 11:15,
                   timestamp = as.Date("2016-1-1") + 1:5,
                   columns = "A")
@@ -259,13 +262,33 @@ test.write_ts_table <- function() {
     ans <- write_ts_table(x, dir, "EMPTY_FILE")
     checkEquals(ans, 0)
     checkTrue(file.exists(file.path(dir, "EMPTY_FILE")))
+
+
+
+    ## add before 1970
+    dates <- seq(from = as.Date("1969-12-25"),
+                 to =   as.Date("1970-01-05"),
+                 by = "1 day")
+    x <- ts_table(seq_along(dates),
+                  timestamp = dates,
+                  columns = "TEST")
+    write_ts_table(x, dir, "1970", replace.file = TRUE)
+    x <- ts_table(99,
+                  as.Date("1970-1-6"),
+                  columns = "TEST")
+    ans <- write_ts_table(x, dir, "1970", add = TRUE)
+    checkEqualsNumeric(ans, 1)
+    ans <- read_ts_tables("1970", dir, drop.weekends = FALSE)
+    checkEquals(ans$timestamp, c(dates, as.Date("1970-1-6")))
+    checkEqualsNumeric(ans$data, c(seq_along(dates), 99))
+    
 }
 
 test.zoo <- function() {
 
-    require("RUnit")
-    require("tsdb")
-    require("zoo")
+    ## require("RUnit")
+    ## require("tsdb")
+    library("zoo", warn.conflicts = FALSE)
 
     y <- ts_table(11:15, as.Date("2016-1-1")-5:1, "close")
     checkEqualsNumeric(zoo::as.zoo(y),

@@ -1,6 +1,6 @@
 ## The package uses code from Enrico Schumann's
 ## R package 'database'.
-## Copyright Enrico Schumann 2010-2017
+## Copyright Enrico Schumann 2010-2018
 
 ## ---------------- time
 
@@ -61,8 +61,6 @@ write_ts_table <- function(ts, dir, file,
     if (!(inherits(ts, "ts_table")))
         stop(sQuote("ts"), " must be a ", sQuote("ts_table"))
 
-    save.scipen <- options(scipen = 1e5)
-    on.exit(options(scipen = save.scipen))
     timestamp <- ttime(.timestamp(ts))
     columns   <- .columns(ts)
 
@@ -180,13 +178,20 @@ read_ts_tables <- function(file, dir, t.type = "guess",
                 stop("check lengths of file and dir")
         }
 
-        if (t.type == "guess" || missing(columns))
+        if (t.type == "guess" || missing(columns) || missing(start)) {
             samp <- readLines(dfile[[1]], n = 2L)
+            samp.n <- length(samp)
+        }
+        if (missing(start) || t.type == "guess") {
+            if (samp.n == 2L)
+                timestamp1 <- as.numeric(
+                    strsplit(samp[[2L]], ",", fixed = TRUE)[[1L]][[1L]])
+            else
+                timestamp1 <- numeric(0)
+        }
         if (t.type == "guess") {
-            if (length(samp) == 2L) {
-                tmp <- as.numeric(
-                    strsplit(samp[[2]], ",", fixed = TRUE)[[1L]][[1L]])
-                t.type <- if (tmp < 43200) ## 86400/2
+            if (samp.n == 2L) {
+                t.type <- if (timestamp1 < 43200) ## 86400/2
                               "Date" else "POSIXct"
             } else
                 t.type <- "Date"
@@ -198,7 +203,11 @@ read_ts_tables <- function(file, dir, t.type = "guess",
         }
 
         if (t.type == "Date") {
-            start <- if (missing(start))
+            start <- if (missing(start) && length(timestamp1))
+                         ttime(timestamp1, "numeric", "Date")
+                     else if (missing(start))
+                         ## a dummy date, only used for
+                         ## empty files
                          as.Date("1970-01-01")
                      else
                          as.Date(start)
@@ -207,16 +216,16 @@ read_ts_tables <- function(file, dir, t.type = "guess",
                          previous_businessday(Sys.Date())
                      else
                          as.Date(end)
-
             timestamp <- seq(start, end , "1 day")
             if (drop.weekends)
                 timestamp <- timestamp[is_businessday(timestamp)]
         } else if (t.type == "POSIXct") {
             warning("'Oh boy', said Helen, 'that's not really supported.'")
             start <- if (missing(start))
-                         as.POSIXct(Sys.Date() - 365)
+                         ttime(timestamp1,
+                               from = "numeric", to = "POSIXct")
                      else
-                         as.POSIXct(start)
+                         as.POSIXct(start)  ## in case it is POSIXlt
 
             if (missing(end))
                 end <- as.POSIXct(previous_businessday(Sys.Date()))
@@ -285,6 +294,14 @@ read_ts_tables <- function(file, dir, t.type = "guess",
     } else if (return.class == "data.frame") {
         ans <- data.frame(timestamp, results)
         colnames(ans) <- c("timestamp", colnames)
+        ans
+    } else if (return.class == "ts_table") {
+        ans <- as.matrix(ans)
+        dimnames(ans) <- NULL                        
+        attr(ans, "t.type") <- t.type
+        attr(ans, "timestamp") <- ttime(timestamp)
+        attr(ans, "columns") <- columns
+        class(ans) <- "ts_table"
         ans
     } else {
         stop("unknown ", sQuote("return.class"))
