@@ -114,7 +114,7 @@
 
 * About tsdb
 
-A terribly-simple data base for time series. All series
+A terribly-simple data base for numeric time series. All series
 are saved as CSV files. The package offers utilities
 for saving files in a standardised format, and for
 retrieving and joining data.
@@ -444,7 +444,8 @@ In read_ts_tables(c("example1", "example2"), dir = "~/tsdb/daily",  :
 ** ts_tables
 
    tsdb works with /time-series tables/
-   (=ts_tables=). These are numeric matrices, so there
+   (objects of class =ts_table=). A =ts_table= is a 
+   numeric matrix, so there
    is always a =dim= attribute. For a time-series table
    =x=, you get the number of observations with =dim(x)[[1]]=.
 
@@ -460,10 +461,10 @@ In read_ts_tables(c("example1", "example2"), dir = "~/tsdb/daily",  :
 (There may be other attributes as well, but these three
 are always present.)
 
-A =ts_table= are not meant as a time-series class. For
+A =ts_table= is not meant as a time-series class. For
 most computations (plotting, calculation of statistics,
-etc), the =ts_table= must first be coerced to zoo, xts,
-dataframe or a similar data structure. Methods that
+etc), the =ts_table= must first be coerced to =zoo=, =xts=,
+a data-frame or a similar data structure. Methods that
 perform such coercions are responsible for converting
 the numeric timestamp vector to an actual
 timestamp. For this, they may use the internal function

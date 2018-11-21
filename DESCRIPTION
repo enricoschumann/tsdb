@@ -8,10 +8,10 @@ Authors@R: person(given = "Enrico", family = "Schumann",
                   role  = c("aut", "cre"),
                   email = "es@enricoschumann.net",
 		  comment = c(ORCID = "0000-0001-7601-6576"))
-Description: A terribly-simple data base for time series. All
-  series are saved as csv files. The package offers utilities for
-  saving files in a standardised format, and for retrieving and
-  joining data.
+Description: A terribly-simple data base for numeric time
+  series. All series are saved as csv files. The package
+  offers utilities for saving files in a standardised
+  format, and for retrieving and joining data.
 License: GPL-3
 Imports: DBI, datetimeutils, fastmatch, utils, zoo
 Suggests: MonetDBLite
