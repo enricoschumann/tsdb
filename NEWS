@@ -1,3 +1,26 @@
+v0.6-0  (2019-??-??; not yet released)
+
+  o fixed: write_ts_table with option 'add' would
+    not rewrite (i.e. delete) data before 1 Jan 1970
+
+  o write_ts_table: new argument 'replace.file'
+
+  o function 'ttime' is now exported
+
+v0.5-0  (2017-10-24)
+
+  o fixed: write_ts_table does now also write empty
+    files
+
+  o write_ts_table: first argument has been renamed 'ts'
+
+  o new function 'file_info'
+
+  o read_ts_tables: rename argument 'column.name' to
+    'column.names' (plural)
+  
+  o new ts_table method for as.matrix
+
 v0.4-1  (2017-02-06)
 
   o 'read_ts_tables' has a new argument 'column.name',
