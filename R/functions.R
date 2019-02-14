@@ -132,14 +132,14 @@ write_ts_table <- function(ts, dir, file,
     } else if (backend == "monetdb") {
 
         if (!inherits(dir, "MonetDBEmbeddedConnection")) {
-            dir <- dbConnect(MonetDBLite::MonetDBLite(), dir)
-            on.exit(dbDisconnect(dir, shutdown = TRUE))
+            dir <- DBI::dbConnect(MonetDBLite::MonetDBLite(), dir)
+            on.exit(DBI::dbDisconnect(dir, shutdown = TRUE))
         }
 
         df <- data.frame(timestamp, unclass(ts))
         colnames(df) <- c("timestamp", columns)
-        dbWriteTable(dir, dbQuoteIdentifier(dir, file), df,
-                     overwrite = overwrite)
+        DBI::dbWriteTable(dir, DBI::dbQuoteIdentifier(dir, file), df,
+                          overwrite = overwrite)
 
     } else
         stop("unknown backend")
@@ -271,11 +271,11 @@ read_ts_tables <- function(file, dir, t.type = "guess",
            ### ********************
 
         if (!inherits(dir, "MonetDBEmbeddedConnection")) {
-            dir <- dbConnect(MonetDBLite::MonetDBLite(), dir)
-            on.exit(dbDisconnect(dir, shutdown = TRUE))
+            dir <- DBI::dbConnect(MonetDBLite::MonetDBLite(), dir)
+            on.exit(DBI::dbDisconnect(dir, shutdown = TRUE))
         }
 
-        dbGetQuery(dir, "SELECT * FROM file;")
+        DBI::dbGetQuery(dir, "SELECT * FROM file;")
 
     } else
         stop("unknown backend")

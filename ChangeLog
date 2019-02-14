@@ -1,3 +1,8 @@
+2019-02-14  Enrico Schumann  <es@enricoschumann.net>
+
+	* DESCRIPTION (Imports, Suggests): move package
+	DBI to Suggests
+
 2018-11-21  Enrico Schumann  <es@enricoschumann.net>
 
         * R/functions.R (write_ts_table): fix 'add' for

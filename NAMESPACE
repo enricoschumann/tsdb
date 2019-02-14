@@ -7,13 +7,13 @@ export(
     write_ts_table
        )
 
-importFrom("DBI",
-           "dbConnect",
-           "dbDisconnect",
-           "dbGetQuery",
-           "dbQuoteIdentifier",
-           "dbWriteTable"
-           )
+## importFrom("DBI",
+##            "dbConnect",
+##            "dbDisconnect",
+##            "dbGetQuery",
+##            "dbQuoteIdentifier",
+##            "dbWriteTable"
+##            )
 
 importFrom("datetimeutils",
            "is_businessday",
