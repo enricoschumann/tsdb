@@ -7,14 +7,6 @@ export(
     write_ts_table
        )
 
-## importFrom("DBI",
-##            "dbConnect",
-##            "dbDisconnect",
-##            "dbGetQuery",
-##            "dbQuoteIdentifier",
-##            "dbWriteTable"
-##            )
-
 importFrom("datetimeutils",
            "is_businessday",
            "previous_businessday")
@@ -28,6 +20,12 @@ importFrom("utils",
 importFrom("zoo",
            "zoo", "coredata", "index", "as.zoo")
 
-S3method(print, ts_table)
+S3method(as.ts_table, ts_table)
 S3method(as.ts_table, zoo)
+
+S3method(as.data.frame, ts_table)
+S3method(as.matrix, ts_table)
 S3method(as.zoo, ts_table)
+
+S3method(print, file_info)
+S3method(print, ts_table)

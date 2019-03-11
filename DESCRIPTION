@@ -2,7 +2,7 @@ Package: tsdb
 Type: Package
 Title: Terribly-Simple Data Base for Time Series
 Version: 0.6-0
-Date: 2019-02-14
+Date: 2019-03-11
 Maintainer: Enrico Schumann <es@enricoschumann.net>
 Authors@R: person(given = "Enrico", family = "Schumann", 
                   role  = c("aut", "cre"),

@@ -13,7 +13,6 @@
 \usage{
 file_info(dir, file)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{dir}{
     character
@@ -24,13 +23,23 @@ file_info(dir, file)
 }
 \details{
 
-  Experimental.
+  Provide information, such as number of entries, of
+  specified files.
+
+  It is recommended that code that uses the returned
+  information to alter or write tables, should explicitly
+  check whether a table exists (column \code{exists} in
+  the returned \code{\link{data.frame}}). For instance,
+  a value of \code{\link{NA}} for \code{min.timestamp}
+  would occur for a non-existing file, but also if the
+  file could not be read for some reason.
   
 }
 \value{
 
   An object of type \code{file_info}, which is a
-  \code{data.frame}.
+  \code{data.frame} with information such as whether a
+  file exists, minimum and maximum timestamp, and more.
   
 }
 \author{
@@ -41,6 +50,5 @@ file_info(dir, file)
 }
 \examples{
 \dontrun{
-file_info(dir = "/tsdb",
-          c("table1", "table2"))}
+file_info(dir = "/tsdb", c("table1", "table2"))}
 }

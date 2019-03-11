@@ -1,8 +1,6 @@
 ## The package uses code from Enrico Schumann's
 ## R package 'database'.
-## Copyright Enrico Schumann 2010-2018
-
-## ---------------- time
+## Copyright Enrico Schumann 2010-2019
 
 ttime <- function(x, from = "datetime", to = "numeric",
                   tz = "", strip.attr = TRUE,
@@ -10,7 +8,9 @@ ttime <- function(x, from = "datetime", to = "numeric",
 
     if (from == "datetime" && to == "numeric") {
         if (strip.attr)
-            c(unclass(x)) else unclass(x)
+            c(unclass(x))
+        else
+            unclass(x)
     } else if (from == "numeric" && to == "Date") {
         class(x) <- "Date"
         x
@@ -28,30 +28,43 @@ ttime <- function(x, from = "datetime", to = "numeric",
 
 ## --------------------- ts_table
 
-.timestamp <- function(x)
-    attr(x, "timestamp")
-
-`.timestamp<-` <- function(x, value) {
-    attr(x, "timestamp") <- value
-    x
+ts_table <- function(data, timestamp, columns) {
+    if (!inherits(timestamp, "Date") &&
+        !inherits(timestamp, "POSIXt"))
+        stop(sQuote("timestamp"), " must be Date or POSIXt")
+    ## TODO if character, match regexp and then coerce
+    ##      to Date/POSIXct?
+    if (inherits(timestamp, "POSIXlt")) {
+        timestamp <- ttime(as.POSIXct(timestamp))
+        t.type <- "POSIXct"
+    }
+    if (inherits(timestamp, "POSIXct")) {
+        timestamp <- ttime(timestamp)
+        t.type <- "POSIXct"
+    }
+    if (inherits(timestamp, "Date")) {
+        timestamp <- ttime(timestamp)
+        t.type <- "Date"
+    }
+    ans <- as.matrix(data)
+    if (missing(columns))
+        columns <- colnames(ans)
+    ans <- unname(ans)
+    if (is.null(columns))
+        stop("no column names, and ", sQuote("columns"), " not provided")
+    if (ncol(ans) != length(columns))
+        stop("more columns than column names")
+    if (is.unsorted(timestamp)) {
+        ii <- order(timestamp)
+        timestamp <- timestamp[ii]
+        ans <- ans[ii, , drop = FALSE]
+    }
+    attr(ans, "timestamp") <- timestamp
+    attr(ans, "t.type") <- t.type
+    attr(ans, "columns") <- columns
+    class(ans) <- "ts_table"
+    ans
 }
-
-.columns <- function(x)
-    attr(x, "columns")
-
-`.columns<-` <- function(x, value) {
-    attr(x, "columns") <- value
-    x
-}
-
-.t.type <- function(x)
-    attr(x, "t.type")
-
-`.t.type<-` <- function(x, value) {
-    attr(x, "t.type") <- value
-    x
-}
-
 
 write_ts_table <- function(ts, dir, file,
                            add = FALSE,
@@ -130,7 +143,7 @@ write_ts_table <- function(ts, dir, file,
                         sep = ",")
         }
     } else if (backend == "monetdb") {
-
+        
         if (!inherits(dir, "MonetDBEmbeddedConnection")) {
             dir <- DBI::dbConnect(MonetDBLite::MonetDBLite(), dir)
             on.exit(DBI::dbDisconnect(dir, shutdown = TRUE))
@@ -308,100 +321,36 @@ read_ts_tables <- function(file, dir, t.type = "guess",
     }
 }
 
-## x <- scan("~/tsdb/daily/cmcier", what= list(numeric(0), numeric(0)),
-##      skip = 1, sep = ",", multi.line=FALSE)
-## read.table("~/tsdb/daily/cmcier", colClasses = "numeric", header = TRUE)
-
-
-dir_info <- function(dir = getwd()) {
-    res <- dir()
-    class(res) <- "dir_info"
+print.ts_table <- function(x, ...) {
+    tmp <- .timestamp(x)
+    from_to <- if (length(tmp))
+                   ttime(range(tmp), "numeric", .t.type(x))
+               else
+                   c(NA, NA)
+    if (nrow(x))
+        cat(nrow(x), " rows [",
+            as.character(from_to[[1L]]), " -> ",
+            as.character(from_to[[2]]),
+            "]: ",
+            paste(attr(x, "columns"), collapse = ", "),
+            "\n", sep = "")
+    else
+        cat(nrow(x), " rows : ",
+            paste(attr(x, "columns"), collapse = ", "),
+            "\n", sep = "")
+    invisible(x)
 }
 
-print.dir_info <- function(x, ...) {
-    print(unclass(x))
-}
 
 
-file_info <- function(dir, file) {
-    dfile <- if (missing(dir))
-                 file
-             else
-                 file.path(dir, file)
-
-    nf <- length(dfile)
-    res <- data.frame(file = file,
-                      dir_file = dfile,
-                      exists = file.exists(dfile),
-                      columns = character(nf),
-                      nrows = NA,
-                      t.type = NA,
-                      min.timestamp = NA,
-                      max.timestamp = NA,
-                      stringsAsFactors = FALSE)
-
-    for (i in seq_len(nf)) {
-        if (!res[["exists"]][i])
-            next
-        fi <- try(read_ts_tables(dfile[i], return.class = NULL), silent = TRUE)
-        if (inherits(fi, "try-error"))
-            next
-        res[["nrows"]][i] <- length(fi$timestamp)
-        if (length(fi$timestamp)) {
-            res[["min.timestamp"]][i] <- min(fi$timestamp)
-            res[["max.timestamp"]][i] <- max(fi$timestamp)
-            res[["t.type"]][i] <- class(fi$timestamp)
-        }
-    }
-    class(res) <- c("file_info", "data.frame")
-    res
-}
-
-print.file_info <- function(x, ...) {
-    print(x, ...)
-}
-
-ts_table <- function(data, timestamp, columns) {
-    if (!inherits(timestamp, "Date") &&
-        !inherits(timestamp, "POSIXt"))
-        stop(sQuote("timestamp"), " must be Date or POSIXt")
-    ## TODO if character, match regexp and then coerce
-    ##      to Date/POSIXct?
-    if (inherits(timestamp, "POSIXlt")) {
-        timestamp <- ttime(as.POSIXct(timestamp))
-        t.type <- "POSIXct"
-    }
-    if (inherits(timestamp, "POSIXct")) {
-        timestamp <- ttime(timestamp)
-        t.type <- "POSIXct"
-    }
-    if (inherits(timestamp, "Date")) {
-        timestamp <- ttime(timestamp)
-        t.type <- "Date"
-    }
-    ans <- as.matrix(data)
-    if (missing(columns))
-        columns <- colnames(ans)
-    ans <- unname(ans)
-    if (is.null(columns))
-        stop("no column names, and ", sQuote("columns"), " not provided")
-    if (ncol(ans) != length(columns))
-        stop("more columns than column names")
-    if (is.unsorted(timestamp)) {
-        ii <- order(timestamp)
-        timestamp <- timestamp[ii]
-        ans <- ans[ii, , drop = FALSE]
-    }
-    attr(ans, "timestamp") <- timestamp
-    attr(ans, "t.type") <- t.type
-    attr(ans, "columns") <- columns
-    class(ans) <- "ts_table"
-    ans
-}
+## --------------------- COERCION
 
 as.ts_table <- function(x, ...) {
     UseMethod("as.ts_table")
 }
+
+as.ts_table.ts_table <- function(x, ...)
+    x
 
 as.ts_table.zoo <- function(x, columns, ...) {
     cols <- if (missing(columns))
@@ -449,25 +398,50 @@ as.matrix.ts_table <- function(x, ...) {
         ans
 }
 
-print.ts_table <- function(x, ...) {
-    tmp <- .timestamp(x)
-    from_to <- if (length(tmp))
-                   ttime(range(tmp), "numeric", .t.type(x))
-               else
-                   c(NA, NA)
-    if (nrow(x))
-        cat(nrow(x), " rows [",
-            as.character(from_to[[1L]]), " -> ",
-            as.character(from_to[[2]]),
-            "]: ",
-            paste(attr(x, "columns"), collapse = ", "),
-            "\n", sep = "")
-    else
-        cat(nrow(x), " rows : ",
-            paste(attr(x, "columns"), collapse = ", "),
-            "\n", sep = "")
-    invisible(x)
+
+## --------------------- file_info
+
+file_info <- function(dir, file) {
+    dfile <- if (missing(dir))
+                 file
+             else
+                 file.path(dir, file)
+
+    nf <- length(dfile)
+    res <- data.frame(file = file,
+                      dir_file = dfile,
+                      exists = file.exists(dfile),
+                      columns = character(nf),
+                      nrows = NA,
+                      t.type = NA,
+                      min.timestamp = NA,
+                      max.timestamp = NA,
+                      stringsAsFactors = FALSE)
+
+    for (i in seq_len(nf)) {
+        if (!res[["exists"]][i])
+            next
+        fi <- try(read_ts_tables(dfile[i], return.class = NULL), silent = TRUE)
+        if (inherits(fi, "try-error"))
+            next
+        res[["nrows"]][i] <- length(fi$timestamp)
+        if (length(fi$timestamp)) {
+            res[["min.timestamp"]][i] <- min(fi$timestamp)
+            res[["max.timestamp"]][i] <- max(fi$timestamp)
+            res[["t.type"]][i] <- class(fi$timestamp)
+        }
+    }
+    class(res) <- c("file_info", "data.frame")
+    res
 }
+
+print.file_info <- function(x, ...) {
+    print(x, ...)
+}
+
+
+
+## --------------------- internal/incomplete functions
 
 adjust_ts_table <- function(ts, dividends, splits, splits.first = TRUE) {
 
@@ -475,4 +449,39 @@ adjust_ts_table <- function(ts, dividends, splits, splits.first = TRUE) {
 
 rm_ts_table <- function(file, dir, ..., trash.bin = ".trash.bin") {
 
+}
+
+dir_info <- function(dir = getwd()) {
+    res <- dir()
+    class(res) <- "dir_info"
+    res
+}
+
+print.dir_info <- function(x, ...) {
+    print(unclass(x))
+    invisible(x)
+}
+
+.timestamp <- function(x)
+    attr(x, "timestamp")
+
+`.timestamp<-` <- function(x, value) {
+    attr(x, "timestamp") <- value
+    x
+}
+
+.columns <- function(x)
+    attr(x, "columns")
+
+`.columns<-` <- function(x, value) {
+    attr(x, "columns") <- value
+    x
+}
+
+.t.type <- function(x)
+    attr(x, "t.type")
+
+`.t.type<-` <- function(x, value) {
+    attr(x, "t.type") <- value
+    x
 }

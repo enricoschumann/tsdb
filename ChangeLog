@@ -1,3 +1,7 @@
+2019-03-11  Enrico Schumann  <es@enricoschumann.net>
+
+	* R/functions.R (as.ts_table.ts_table): add method
+
 2019-02-14  Enrico Schumann  <es@enricoschumann.net>
 
 	* DESCRIPTION (Imports, Suggests): move package
