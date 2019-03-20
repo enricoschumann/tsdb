@@ -9,7 +9,8 @@ export(
 
 importFrom("datetimeutils",
            "is_businessday",
-           "previous_businessday")
+           "previous_businessday",
+           "roundPOSIXt")
 
 importFrom("fastmatch",
            "fmatch")

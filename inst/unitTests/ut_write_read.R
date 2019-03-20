@@ -2,9 +2,9 @@
 
 test.ts_table <- function() {
 
-    ## require("RUnit")
-    ## require("tsdb")
-    ## require("zoo")
+    require("RUnit")
+    require("tsdb")
+    require("zoo")
     y <- ts_table(11:15, as.Date("2016-1-1")-5:1, "close")
 
     checkEquals(y,

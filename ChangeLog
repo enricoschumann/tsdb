@@ -1,20 +1,24 @@
 2019-03-20  Enrico Schumann  <es@enricoschumann.net>
 
-	* R/functions.R (read_ts_tables): rename
-	argument 'fread' to 'read.fn', with default
-	NULL. To use package 'data.table', set it to
-	"fread".
-	(read_ts_tables): fixed -- 'drop.weekends' now
-	works for intraday data
+        * NAMESPACE: import 'datetimeutils::roundPOSIXt'
+
+        * R/functions.R (read_ts_tables): rename
+        argument 'fread' to 'read.fn', with default
+        NULL. To use package 'data.table', set it to
+        "fread".
+        (read_ts_tables): fixed -- 'drop.weekends'
+        now works for intraday data
+        (read_ts_tables): new argument 'frequency',
+        used only for intraday data
 
 2019-03-11  Enrico Schumann  <es@enricoschumann.net>
 
-	* R/functions.R (as.ts_table.ts_table): add method
+        * R/functions.R (as.ts_table.ts_table): add method
 
 2019-02-14  Enrico Schumann  <es@enricoschumann.net>
 
-	* DESCRIPTION (Imports, Suggests): move package
-	DBI to Suggests
+        * DESCRIPTION (Imports, Suggests): move package
+        DBI to Suggests
 
 2018-11-21  Enrico Schumann  <es@enricoschumann.net>
 
@@ -43,9 +47,9 @@
 
 2018-02-01  Enrico Schumann  <es@enricoschumann.net>
 
-	* R/functions.R (read_ts_tables): experimental
-	new argument 'fread'; if TRUE, files are read
-	with data.table::fread instead of read.table
+        * R/functions.R (read_ts_tables): experimental
+        new argument 'fread'; if TRUE, files are read
+        with data.table::fread instead of read.table
 
 2017-12-11  Enrico Schumann  <es@enricoschumann.net>
 
@@ -65,7 +69,7 @@
 
 2017-10-24  Enrico Schumann  <es@enricoschumann.net>
 
-	* DESCRIPTION (Version): 0.5-0
+        * DESCRIPTION (Version): 0.5-0
 
         * R/functions.R (ts_table): store timestamp as
         numeric (which reverts the change introduced in

@@ -13,7 +13,8 @@ read_ts_tables(file, dir, t.type = "guess",
                drop.weekends = TRUE,
                column.names = "\%dir\%/\%file\%::\%column\%",
                backend = "csv",
-               read.fn = NULL)
+               read.fn = NULL,
+               frequency = "1 sec")
 }
 \arguments{
   \item{file}{
@@ -58,7 +59,12 @@ read_ts_tables(file, dir, t.type = "guess",
     to use \code{\link[data.table]{fread}}
     from package \pkg{data.table}
   }
+  \item{frequency}{
 
+    character: only used when \code{t.type} is
+    \code{POSIXct} (or guessed to be \code{POSIXct})
+
+  }
 }
 \details{
   Read time-series data from csv files.

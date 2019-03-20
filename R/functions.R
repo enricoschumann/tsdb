@@ -145,7 +145,7 @@ write_ts_table <- function(ts, dir, file,
                         sep = ",")
         }
     } else if (backend == "monetdb") {
-        
+
         if (!inherits(dir, "MonetDBEmbeddedConnection")) {
             dir <- DBI::dbConnect(MonetDBLite::MonetDBLite(), dir)
             on.exit(DBI::dbDisconnect(dir, shutdown = TRUE))
@@ -167,12 +167,12 @@ read_ts_tables <- function(file, dir, t.type = "guess",
                            drop.weekends = TRUE,
                            column.names = "%dir%/%file%::%column%",
                            backend = "csv",
-                           read.fn = NULL) {
+                           read.fn = NULL,
+                           frequency = "1 sec") {
 
     backend <- tolower(backend)
 
     if (backend == "csv") {
-    ### ****************
 
         if (missing(dir)) {
             dir <- ""
@@ -180,7 +180,6 @@ read_ts_tables <- function(file, dir, t.type = "guess",
         } else {
             dfile <- file.path(dir, file)
         }
-
 
         if (length(dir) != length(file)) {
             if (length(dir) > 1L && length(file) > 1L)
@@ -198,6 +197,7 @@ read_ts_tables <- function(file, dir, t.type = "guess",
             samp <- readLines(dfile[[1]], n = 2L)
             samp.n <- length(samp)
         }
+
         if (missing(start) || t.type == "guess") {
             if (samp.n == 2L)
                 timestamp1 <- as.numeric(
@@ -205,13 +205,14 @@ read_ts_tables <- function(file, dir, t.type = "guess",
             else
                 timestamp1 <- numeric(0)
         }
+
         if (t.type == "guess") {
-            if (samp.n == 2L) {
-                t.type <- if (timestamp1 < 43200) ## 86400/2
-                              "Date" else "POSIXct"
-            } else
-                t.type <- "Date"
+            t.type <- if (samp.n == 2L && timestamp1 > 43200) ## 86400/2
+                          "POSIXct"
+                      else
+                          "Date"
         }
+
         if (missing(columns)) {
             tmp <- gsub("\"", "",
                         strsplit(samp[[1]], ",", fixed = TRUE)[[1]])
@@ -235,6 +236,7 @@ read_ts_tables <- function(file, dir, t.type = "guess",
             timestamp <- seq(start, end , "1 day")
             if (drop.weekends)
                 timestamp <- timestamp[is_businessday(timestamp)]
+            timestamp <- c(unclass(timestamp))
         } else if (t.type == "POSIXct") {
             start <- if (missing(start))
                          ttime(timestamp1,
@@ -246,9 +248,14 @@ read_ts_tables <- function(file, dir, t.type = "guess",
                 end <- as.POSIXct(previous_businessday(Sys.Date()))
             else
                 end <- as.POSIXct(end)
-            timestamp <- seq(start, end , "1 sec")
+            if (frequency != "1 sec") {
+                start <- roundPOSIXt(start, frequency)
+                end   <- roundPOSIXt(end,   frequency, up = TRUE)
+            }
+            timestamp <- seq(start, end , frequency)
             if (drop.weekends)
                 timestamp <- timestamp[is_businessday(timestamp)]
+            timestamp <- c(unclass(timestamp))
         } else
             stop("unknown ", sQuote("t.type"))
 
@@ -281,6 +288,7 @@ read_ts_tables <- function(file, dir, t.type = "guess",
             if (!is.null(res))
                 results[ii, (nc*(i-1)+1):(nc*i)] <- as.matrix(res)
         }
+
         rm <- rowSums(is.na(results)) == dim(results)[[2L]]
         results <- results[!rm, ,drop = FALSE]
         timestamp <- timestamp[!rm]
@@ -308,8 +316,8 @@ read_ts_tables <- function(file, dir, t.type = "guess",
         stop("unknown backend")
 
     if (is.null(return.class)) {
-        list(data      = results,
-             timestamp = timestamp,
+        list(data = results,
+             timestamp = ttime(timestamp, from = "numeric", t.type),
              columns = rep(columns, each = length(dfile)),
              file.path = paste(rep(dfile, each = length(columns)), columns, sep = "::"))
     } else if (return.class == "zoo") {
@@ -324,15 +332,14 @@ read_ts_tables <- function(file, dir, t.type = "guess",
         ans
     } else if (return.class == "ts_table") {
         ans <- as.matrix(ans)
-        dimnames(ans) <- NULL                        
+        dimnames(ans) <- NULL
         attr(ans, "t.type") <- t.type
         attr(ans, "timestamp") <- ttime(timestamp)
         attr(ans, "columns") <- columns
         class(ans) <- "ts_table"
         ans
-    } else {
+    } else
         stop("unknown ", sQuote("return.class"))
-    }
 }
 
 print.ts_table <- function(x, ...) {
