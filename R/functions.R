@@ -236,7 +236,6 @@ read_ts_tables <- function(file, dir, t.type = "guess",
             if (drop.weekends)
                 timestamp <- timestamp[is_businessday(timestamp)]
         } else if (t.type == "POSIXct") {
-            warning("'Oh boy', said Helen, 'that's not really supported/tested.'")
             start <- if (missing(start))
                          ttime(timestamp1,
                                from = "numeric", to = "POSIXct")
@@ -248,6 +247,8 @@ read_ts_tables <- function(file, dir, t.type = "guess",
             else
                 end <- as.POSIXct(end)
             timestamp <- seq(start, end , "1 sec")
+            if (drop.weekends)
+                timestamp <- timestamp[is_businessday(timestamp)]
         } else
             stop("unknown ", sQuote("t.type"))
 

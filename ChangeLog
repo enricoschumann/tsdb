@@ -4,6 +4,8 @@
 	argument 'fread' to 'read.fn', with default
 	NULL. To use package 'data.table', set it to
 	"fread".
+	(read_ts_tables): fixed -- 'drop.weekends' now
+	works for intraday data
 
 2019-03-11  Enrico Schumann  <es@enricoschumann.net>
 
