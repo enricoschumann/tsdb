@@ -13,7 +13,7 @@ read_ts_tables(file, dir, t.type = "guess",
                drop.weekends = TRUE,
                column.names = "\%dir\%/\%file\%::\%column\%",
                backend = "csv",
-               fread = FALSE)
+               read.fn = NULL)
 }
 \arguments{
   \item{file}{
@@ -35,8 +35,12 @@ read_ts_tables(file, dir, t.type = "guess",
     character. \bold{Currently only a single column is supported.}
 }
   \item{return.class}{
-    NULL or character
-}
+
+    \code{NULL} (default) or character: if \code{NULL}, a list is
+    returned. Also supported are \code{zoo},
+    \code{\link{data.frame}} and \code{\link{ts_table}}.
+
+  }
   \item{drop.weekends}{
     logical
 }
@@ -47,11 +51,12 @@ read_ts_tables(file, dir, t.type = "guess",
 
   }
   \item{backend}{
-    character: currently, \code{csv} and \code{monetdb} are supported
+    character: currently, only \code{csv} is fully supported
   }
-  \item{fread}{
-    logical: use \code{\link[data.table]{fread}}
-    from package \pkg{data.table}?
+  \item{read.fn}{
+    \code{NULL} or character: use \sQuote{\code{fread}}
+    to use \code{\link[data.table]{fread}}
+    from package \pkg{data.table}
   }
 
 }
@@ -74,7 +79,8 @@ read_ts_tables(file, dir, t.type = "guess",
 }
 \examples{
 \dontrun{
-read_ts_tables(c("table1", "table2"), dir = "~/tsdb",
+read_ts_tables(c("table1", "table2"),
+               dir = "~/tsdb",
                columns = "close",
                return.class = "zoo")}
 }
