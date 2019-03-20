@@ -1,3 +1,10 @@
+2019-03-20  Enrico Schumann  <es@enricoschumann.net>
+
+	* R/functions.R (read_ts_tables): rename
+	argument 'fread' to 'read.fn', with default
+	NULL. To use package 'data.table', set it to
+	"fread".
+
 2019-03-11  Enrico Schumann  <es@enricoschumann.net>
 
 	* R/functions.R (as.ts_table.ts_table): add method

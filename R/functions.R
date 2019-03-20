@@ -167,7 +167,7 @@ read_ts_tables <- function(file, dir, t.type = "guess",
                            drop.weekends = TRUE,
                            column.names = "%dir%/%file%::%column%",
                            backend = "csv",
-                           fread = FALSE) {
+                           read.fn = NULL) {
 
     backend <- tolower(backend)
 
@@ -236,7 +236,7 @@ read_ts_tables <- function(file, dir, t.type = "guess",
             if (drop.weekends)
                 timestamp <- timestamp[is_businessday(timestamp)]
         } else if (t.type == "POSIXct") {
-            warning("'Oh boy', said Helen, 'that's not really supported.'")
+            warning("'Oh boy', said Helen, 'that's not really supported/tested.'")
             start <- if (missing(start))
                          ttime(timestamp1,
                                from = "numeric", to = "POSIXct")
@@ -255,17 +255,19 @@ read_ts_tables <- function(file, dir, t.type = "guess",
         results <- array(NA_real_,
                          dim = c(length(timestamp), length(dfile)*nc))
         for (i in seq_along(dfile)) {
-            if (fread)
+            if (is.null(read.fn))
                 tmp <- data.table::fread(dfile[[i]],
                                          sep = ",",
                                          header = TRUE,
                                          data.table = FALSE)
-            else
+            else if (read.fn == "fread")
                 tmp <- read.table(dfile[[i]],
                                   sep = ",",
                                   stringsAsFactors = FALSE,
                                   header = TRUE,
                                   colClasses = "numeric")
+            else
+                stop("unknown ", sQuote("read.fn"))
             ii <- fmatch(tmp[[1L]], timestamp, nomatch = 0L)
             tmp.names <- colnames(tmp)
             if (!all(columns %in% tmp.names)) {
