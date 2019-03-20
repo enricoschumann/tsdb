@@ -50,9 +50,9 @@ test.ts_table <- function() {
 
 test.read_ts_tables <- function() {
 
-    ## require("RUnit")
-    ## require("tsdb")
-    ## require("zoo")
+    library("RUnit")
+    library("tsdb")
+    library("zoo")
     x <- ts_table(data = 11:15,
                   timestamp = as.Date("2016-1-1") + 1:5,
                   columns = "A")
@@ -73,12 +73,40 @@ test.read_ts_tables <- function() {
                 structure(c(11, 12, 13, 14, 15, 6, 7, 8, 9, 10),
                           .Dim = c(5L, 2L)))
 
+    ## check POSIXct
 
-    ## z1 <- ts_table(11:15, as.POSIXct("2016-1-1 10:00:00", tz = "UTC")+0:4, "close")
-    ## write_ts_table(z1, dir, "X1")
-    ## z2 <- ts_table(1:5, as.POSIXct("2016-1-1 10:00:00", tz = "UTC")+1:5, "close")
-    ## write_ts_table(z2, dir, "X2")
-    ## read_ts_tables(c("X1", "X2"), dir, columns = "close")
+    z1 <- ts_table(11:15,
+                   as.POSIXct("2016-1-1 10:00:00", tz = "UTC")+0:4,
+                   "close")
+    write_ts_table(z1, dir, "X1")
+    z2 <- ts_table(1:5,
+                   as.POSIXct("2016-1-1 10:00:00", tz = "UTC")+1:5,
+                   "close")
+    write_ts_table(z2, dir, "X2")
+    z12 <- read_ts_tables(c("X1", "X2"), dir, columns = "close",
+                          start = as.POSIXct("2016-1-1 10:00:00", tz = "UTC"),
+                          end = as.POSIXct("2016-1-1 10:00:20", tz = "UTC"))
+
+    checkEquals(z12$data,
+                structure(c(11, 12, 13, 14, 15, NA,
+                            NA, 1, 2, 3, 4, 5),
+                          .Dim = c(6L, 2L)))
+    
+    checkEquals(z12$timestamp,
+                as.POSIXct("2016-1-1 10:00:00", tz = "UTC")+0:5)
+
+    z12 <- read_ts_tables(c("X1", "X2"), dir, columns = "close",
+                          start = "2016-1-1 11:00:00",
+                          end   = "2016-1-1 11:00:20")
+    
+    checkEquals(z12$data,
+                structure(c(11, 12, 13, 14, 15, NA,
+                            NA, 1, 2, 3, 4, 5),
+                          .Dim = c(6L, 2L)))
+    
+    checkEquals(z12$timestamp,
+                as.POSIXct("2016-1-1 10:00:00", tz = "UTC")+0:5)
+
 
     
     ## check empty file
@@ -87,6 +115,11 @@ test.read_ts_tables <- function() {
     checkEquals(em$timestamp, structure(numeric(0), class = "Date"))
     checkEquals(em$data, structure(numeric(0), .Dim = 0:1))
 
+
+
+    
+
+    
 }
 
 test.write_ts_table <- function() {
