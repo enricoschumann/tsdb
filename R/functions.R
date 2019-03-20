@@ -1,6 +1,8 @@
 ## The package uses code from Enrico Schumann's
 ## R package 'database'.
-## Copyright Enrico Schumann 2010-2019
+## Copyright (C) Enrico Schumann 2010-2019
+
+## ---------------- time
 
 ttime <- function(x, from = "datetime", to = "numeric",
                   tz = "", strip.attr = TRUE,
@@ -164,7 +166,8 @@ read_ts_tables <- function(file, dir, t.type = "guess",
                            return.class = NULL,
                            drop.weekends = TRUE,
                            column.names = "%dir%/%file%::%column%",
-                           backend = "csv") {
+                           backend = "csv",
+                           fread = FALSE) {
 
     backend <- tolower(backend)
 
@@ -252,9 +255,17 @@ read_ts_tables <- function(file, dir, t.type = "guess",
         results <- array(NA_real_,
                          dim = c(length(timestamp), length(dfile)*nc))
         for (i in seq_along(dfile)) {
-            tmp <- read.table(dfile[[i]], sep = ",",
-                              stringsAsFactors = FALSE,
-                              header = TRUE, colClasses = "numeric")
+            if (fread)
+                tmp <- data.table::fread(dfile[[i]],
+                                         sep = ",",
+                                         header = TRUE,
+                                         data.table = FALSE)
+            else
+                tmp <- read.table(dfile[[i]],
+                                  sep = ",",
+                                  stringsAsFactors = FALSE,
+                                  header = TRUE,
+                                  colClasses = "numeric")
             ii <- fmatch(tmp[[1L]], timestamp, nomatch = 0L)
             tmp.names <- colnames(tmp)
             if (!all(columns %in% tmp.names)) {
@@ -341,7 +352,52 @@ print.ts_table <- function(x, ...) {
     invisible(x)
 }
 
+dir_info <- function(dir = getwd()) {
+    res <- dir()
+    class(res) <- "dir_info"
+}
 
+print.dir_info <- function(x, ...) {
+    print(unclass(x))
+}
+
+file_info <- function(dir, file) {
+    dfile <- if (missing(dir))
+                 file
+             else
+                 file.path(dir, file)
+
+    nf <- length(dfile)
+    res <- data.frame(file = file,
+                      dir_file = dfile,
+                      exists = file.exists(dfile),
+                      columns = character(nf),
+                      nrows = NA,
+                      t.type = NA,
+                      min.timestamp = NA,
+                      max.timestamp = NA,
+                      stringsAsFactors = FALSE)
+
+    for (i in seq_len(nf)) {
+        if (!res[["exists"]][i])
+            next
+        fi <- try(read_ts_tables(dfile[i], return.class = NULL), silent = TRUE)
+        if (inherits(fi, "try-error"))
+            next
+        res[["nrows"]][i] <- length(fi$timestamp)
+        if (length(fi$timestamp)) {
+            res[["min.timestamp"]][i] <- min(fi$timestamp)
+            res[["max.timestamp"]][i] <- max(fi$timestamp)
+            res[["t.type"]][i] <- class(fi$timestamp)
+        }
+    }
+    class(res) <- c("file_info", "data.frame")
+    res
+}
+
+print.file_info <- function(x, ...) {
+    print(x, ...)
+}
 
 ## --------------------- COERCION
 
