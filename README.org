@@ -115,8 +115,8 @@
 * About tsdb
 
 A terribly-simple data base for numeric time
-series. All series are saved as CSV files. The package
-offers utilities for saving files in a standardised
+series. Series are stored in CSV format. The package
+offers utilities for saving series in a standardised
 format, and for retrieving and joining data.
 
 ** Good things about tsdb
@@ -452,7 +452,7 @@ In read_ts_tables(c("example1", "example2"), dir = "~/tsdb/daily",  :
    (objects of class =ts_table=). A =ts_table= is a 
    numeric matrix, so there
    is always a =dim= attribute. For a time-series table
-   =x=, you get the number of observations with =dim(x)[[1]]=.
+   =x=, you get the number of observations with =dim(x)[1L]=.
 
    Attached to this matrix are several attributes:
 

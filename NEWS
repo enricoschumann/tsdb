@@ -1,11 +1,25 @@
-v0.6-0  (2019-??-??; not yet released)
+v0.6-0  (2019-03-21)
 
-  o fixed: write_ts_table with option 'add' would
+  o fixed: 'write_ts_table' with option 'add' would
     not rewrite (i.e. delete) data before 1 Jan 1970
 
   o write_ts_table: new argument 'replace.file'
 
+  o write_ts_table: scientific notation is no longer
+    suppressed, i.e. numbers may now be written as
+    e.g. 1e10
+
+  o read_ts_tables: new arguments 'read.fn' and
+    'frequency'
+
+  o read_ts_tables: 'return.class' may also be
+    'ts_table'
+
   o function 'ttime' is now exported
+
+  o there are public repositories at
+    https://github.com/enricoschumann/tsdb and
+    https://gitlab.com/enricoschumann/tsdb
 
 v0.5-0  (2017-10-24)
 

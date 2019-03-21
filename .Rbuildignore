@@ -1,0 +1,11 @@
+.es_keywords
+.git
+.gitignore
+R/dev.R
+README.org
+TODO
+TODO.org
+inst/other
+manual
+various
+various_scripts

@@ -1,4 +1,6 @@
-2019-03-20  Enrico Schumann  <es@enricoschumann.net>
+2019-03-21  Enrico Schumann  <es@enricoschumann.net>
+
+	* DESCRIPTION (Version): 0.6-0
 
         * NAMESPACE: import 'datetimeutils::roundPOSIXt'
 
@@ -37,7 +39,7 @@
 2018-03-21  Enrico Schumann  <es@enricoschumann.net>
 
         * R/functions.R (write_ts_table): with
-        replace.file set to TRUE, check whether files
+        'replace.file' set to TRUE, check whether files
         exists before removal (this avoids the warning
         about non-existing files)
 
