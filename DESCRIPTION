@@ -1,18 +1,26 @@
 Package: tsdb
 Type: Package
 Title: Terribly-Simple Data Base for Time Series
-Version: 0.6-0
-Date: 2019-03-21
+Version: 0.6-1
+Date: 2019-03-24
 Maintainer: Enrico Schumann <es@enricoschumann.net>
 Authors@R: person(given = "Enrico", family = "Schumann", 
                   role  = c("aut", "cre"),
                   email = "es@enricoschumann.net",
 		  comment = c(ORCID = "0000-0001-7601-6576"))
 Description: A terribly-simple data base for numeric
-  time series. Series are stored in CSV format. The
-  package offers utilities for saving series in a
-  standardised format, and for retrieving and joining
-  data.
+  time series, written purely in R, so no external
+  database-software is needed. Series are stored in
+  plain-text files (the most-portable and enduring file
+  type) in CSV format; timestamps are encoded in R's
+  native numeric representation for Date/POSIXct, which
+  makes them fast to parse, but keeps them accessible
+  with other software. The package provides tools for
+  saving and updating series in this standardised
+  format, for retrieving and joining data, for
+  summarising files and directories, and for coercing
+  series from and to other data types (such as 'zoo'
+  series).
 License: GPL-3
 Imports: datetimeutils, fastmatch, utils, zoo
 Suggests: DBI, MonetDBLite, data.table
