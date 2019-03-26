@@ -1,7 +1,7 @@
 ## write nf time-series to files, then read/merge them
 
-nf <- 1000    ## number of files
-nd <- 3700   ## number of days per time-series
+nf <- 100    ## number of files
+nd <- 6000   ## number of days per time-series
 
 
 library("tsdb")
@@ -12,6 +12,7 @@ x <- 1:nd
 z0 <- zoo(x, as.Date("2007-12-31") + x)
 
 trials <- 5
+
 t <- system.time(
     for (i in 1:trials ) {
         for (i in 1:nf) {
@@ -22,11 +23,10 @@ t <- system.time(
 )
 t[[3]]/trials
 
-
 t <- system.time(
     for (i in 1:trials ) {
     read_ts_tables(as.character(1:nf), dir = d,
-                   start = "2010-1-1", end = "2015-12-31",
+                   start = "2007-1-1", end = "2016-12-31",
                    return.class = "zoo", column.names = "%file%")
     }
 )
@@ -35,9 +35,9 @@ t[[3]]/trials
 t <- system.time(
     for (i in 1:trials ) {
     read_ts_tables(as.character(1:nf), dir = d,
-                   start = "2010-1-1", end = "2015-12-31",
+                   start = "2007-1-1", end = "2016-12-31",
                    return.class = "zoo", column.names = "%file%",
-                   fread = TRUE)
+                   read.fn = "fread")
     }
 )
 t[[3]]/trials

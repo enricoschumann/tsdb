@@ -7,8 +7,7 @@
 
   Provides information about data stored in file:
   columns, number of observations, range of timestamps.
- 
-  
+   
 }
 \usage{
 file_info(dir, file)
@@ -49,6 +48,8 @@ file_info(dir, file)
   \code{\link{ts_table}}
 }
 \examples{
-\dontrun{
-file_info(dir = "/tsdb", c("table1", "table2"))}
+ts <- ts_table(1:3, as.Date("2018-12-3") + 1:3, columns = "A")
+d <- tempdir()
+write_ts_table(ts, file = "temp", dir = d)
+file_info(d, "temp")
 }

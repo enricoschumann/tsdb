@@ -264,16 +264,16 @@ read_ts_tables <- function(file, dir, t.type = "guess",
                          dim = c(length(timestamp), length(dfile)*nc))
         for (i in seq_along(dfile)) {
             if (is.null(read.fn))
-                tmp <- data.table::fread(dfile[[i]],
-                                         sep = ",",
-                                         header = TRUE,
-                                         data.table = FALSE)
-            else if (read.fn == "fread")
                 tmp <- read.table(dfile[[i]],
                                   sep = ",",
                                   stringsAsFactors = FALSE,
                                   header = TRUE,
                                   colClasses = "numeric")
+            else if (read.fn == "fread")
+                tmp <- data.table::fread(dfile[[i]],
+                                         sep = ",",
+                                         header = TRUE,
+                                         data.table = FALSE)
             else
                 stop("unknown ", sQuote("read.fn"))
             ii <- fmatch(tmp[[1L]], timestamp, nomatch = 0L)
@@ -319,22 +319,23 @@ read_ts_tables <- function(file, dir, t.type = "guess",
         list(data = results,
              timestamp = ttime(timestamp, from = "numeric", t.type),
              columns = rep(columns, each = length(dfile)),
-             file.path = paste(rep(dfile, each = length(columns)), columns, sep = "::"))
+             file.path = paste(rep(dfile, each = length(columns)),
+                               columns, sep = "::"))
     } else if (return.class == "zoo") {
         if (!requireNamespace("zoo"))
             stop("package ", sQuote("zoo"), " not available")
         if (!is.null(dim(results)))
             colnames(results) <- colnames
-        zoo(results, timestamp)
+        zoo(results, ttime(timestamp, from = "numeric", t.type))
     } else if (return.class == "data.frame") {
-        ans <- data.frame(timestamp, results)
+        ans <- data.frame(ttime(timestamp, from = "numeric", t.type), results)
         colnames(ans) <- c("timestamp", colnames)
         ans
     } else if (return.class == "ts_table") {
         ans <- as.matrix(ans)
         dimnames(ans) <- NULL
         attr(ans, "t.type") <- t.type
-        attr(ans, "timestamp") <- ttime(timestamp)
+        attr(ans, "timestamp") <- timestamp
         attr(ans, "columns") <- columns
         class(ans) <- "ts_table"
         ans
@@ -365,49 +366,13 @@ print.ts_table <- function(x, ...) {
 dir_info <- function(dir = getwd()) {
     res <- dir()
     class(res) <- "dir_info"
-}
-
-print.dir_info <- function(x, ...) {
-    print(unclass(x))
-}
-
-file_info <- function(dir, file) {
-    dfile <- if (missing(dir))
-                 file
-             else
-                 file.path(dir, file)
-
-    nf <- length(dfile)
-    res <- data.frame(file = file,
-                      dir_file = dfile,
-                      exists = file.exists(dfile),
-                      columns = character(nf),
-                      nrows = NA,
-                      t.type = NA,
-                      min.timestamp = NA,
-                      max.timestamp = NA,
-                      stringsAsFactors = FALSE)
-
-    for (i in seq_len(nf)) {
-        if (!res[["exists"]][i])
-            next
-        fi <- try(read_ts_tables(dfile[i], return.class = NULL), silent = TRUE)
-        if (inherits(fi, "try-error"))
-            next
-        res[["nrows"]][i] <- length(fi$timestamp)
-        if (length(fi$timestamp)) {
-            res[["min.timestamp"]][i] <- min(fi$timestamp)
-            res[["max.timestamp"]][i] <- max(fi$timestamp)
-            res[["t.type"]][i] <- class(fi$timestamp)
-        }
-    }
-    class(res) <- c("file_info", "data.frame")
     res
 }
 
-print.file_info <- function(x, ...) {
-    print(x, ...)
+print.dir_info <- function(x, ...) {
+    print(unclass(x), ...)
 }
+
 
 ## --------------------- COERCION
 
@@ -445,7 +410,8 @@ as.data.frame.ts_table <- function(x,
             names(ans) <- col
         } else {
             ans <- cbind(timestamp = timestamp,
-                         data.frame(unclass(x), stringsAsFactors = FALSE))
+                         data.frame(unclass(x),
+                                    stringsAsFactors = FALSE))
             names(ans) <- c("timestamp", col)
         }
         ans
@@ -487,7 +453,8 @@ file_info <- function(dir, file) {
     for (i in seq_len(nf)) {
         if (!res[["exists"]][i])
             next
-        fi <- try(read_ts_tables(dfile[i], return.class = NULL), silent = TRUE)
+        fi <- try(read_ts_tables(dfile[i], return.class = NULL),
+                  silent = TRUE)
         if (inherits(fi, "try-error"))
             next
         res[["nrows"]][i] <- length(fi$timestamp)
@@ -502,7 +469,8 @@ file_info <- function(dir, file) {
 }
 
 print.file_info <- function(x, ...) {
-    print(x, ...)
+    print.data.frame(x, ...)
+    invisible(x)
 }
 
 
@@ -515,17 +483,6 @@ adjust_ts_table <- function(ts, dividends, splits, splits.first = TRUE) {
 
 rm_ts_table <- function(file, dir, ..., trash.bin = ".trash.bin") {
 
-}
-
-dir_info <- function(dir = getwd()) {
-    res <- dir()
-    class(res) <- "dir_info"
-    res
-}
-
-print.dir_info <- function(x, ...) {
-    print(unclass(x))
-    invisible(x)
 }
 
 .timestamp <- function(x)

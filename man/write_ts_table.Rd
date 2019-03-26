@@ -1,7 +1,7 @@
 \name{write_ts_table}
 \alias{write_ts_table}
 \title{
-  Write Data to Files
+  Write Time-Series Data to File
 }
 \description{
   Write time-series data to files.
@@ -36,7 +36,7 @@ write_ts_table(ts, dir, file, add = FALSE, overwrite = FALSE,
   \item{replace.file}{
     
     logical: if \code{TRUE}, an existing file is deleted
-    and replaced by a new file (i.e. containing \code{ts}))
+    and replaced by a new file (i.e. containing \code{ts})
     
   }
   \item{backend}{
@@ -52,21 +52,21 @@ write_ts_table(ts, dir, file, add = FALSE, overwrite = FALSE,
   The function takes a \code{ts_table} and writes it to
   a file.
 
-  If the file already exist and both \code{add} and
+  If the file already exists and both \code{add} and
   \code{overwrite} are \code{FALSE} (the default),
   nothing is written.
 
   When \code{add} is \code{TRUE}, the function checks
-  if \code{x} contains timestamps not yet in the file
+  if \code{ts} contains timestamps not yet in the file
   and, if there are any, writes only those data.
 
   When \code{overwrite} is \code{TRUE}, the function
   merges all observations in the file with those in
-  \code{x} and writes the result back to the file. If
-  \code{x} contains timestamps that were already in the
+  \code{ts} and writes the result back to the file. If
+  \code{ts} contains timestamps that were already in the
   file, the data in the file are overwritten. Note that
   no data will be removed from the file: timestamps not
-  in \code{x} remain unchanged in the file.
+  in \code{ts} remain unchanged in the file.
 
   
 }
@@ -77,10 +77,21 @@ write_ts_table(ts, dir, file, add = FALSE, overwrite = FALSE,
   Enrico Schumann
 }
 \seealso{
-  write_ts_table
+  \code{\link{read_ts_tables}}
 }
 \examples{
-\dontrun{
-write_ts_table(ts_table(1, Sys.Date(), "a_column"),
-               dir = "~/tsdb/daily", file = "example")}
+t1 <- ts_table(1:3, as.Date("2018-12-3") + 1:3, columns = "A")
+t2 <- ts_table(4:5, as.Date("2018-12-3") + 1:2, columns = "A")
+
+d <- tempdir()  ## this is just an example.
+                ## Actual (valuable) data should never
+                ## be stored in a tempdir!
+
+write_ts_table(t1, dir = d, file = "t1")
+write_ts_table(t2, dir = d, file = "t2")
+
+read_ts_tables(c("t1", "t2"),
+               dir = d, columns = "A",
+               return.class = "zoo",
+               column.names = "\%file\%.\%column\%")
 }

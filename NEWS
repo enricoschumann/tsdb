@@ -1,3 +1,12 @@
+v0.6-1  (2019-03-26)
+
+  o various documentation updates
+
+  o the "Tutorial" PDF has been removed, but
+    its content may be found at
+    https://gitlab.com/enricoschumann/tsdb/README.org and
+    https://github.com/enricoschumann/tsdb/README.org
+
 v0.6-0  (2019-03-21)
 
   o fixed: 'write_ts_table' with option 'add' would
@@ -23,8 +32,8 @@ v0.6-0  (2019-03-21)
 
 v0.5-0  (2017-10-24)
 
-  o fixed: write_ts_table does now also write empty
-    files
+  o fixed: 'write_ts_table' does now also write
+    empty files
 
   o write_ts_table: first argument has been renamed 'ts'
 
@@ -32,7 +41,7 @@ v0.5-0  (2017-10-24)
 
   o read_ts_tables: rename argument 'column.name' to
     'column.names' (plural)
-  
+
   o new ts_table method for as.matrix
 
 v0.4-1  (2017-02-06)
@@ -53,7 +62,7 @@ v0.2-1  (2016-12-09)
 
   o A Tutorial is now installed with the package.
     It can be accessed via
-    
+
       browseURL(system.file("Tutorial/README.html", package = "tsdb"))
       browseURL(system.file("Tutorial/README.pdf", package = "tsdb"))
 
@@ -65,7 +74,7 @@ v0.2-0  (2016-12-05)
   o New method 'as.zoo.ts_table' added.
 
   o Tutorial added (see file README.org).
-  
+
 v0.1-0  (2016-11-24)
 
   o Initial version of package.

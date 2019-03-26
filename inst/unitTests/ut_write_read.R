@@ -2,9 +2,9 @@
 
 test.ts_table <- function() {
 
-    require("RUnit")
-    require("tsdb")
-    require("zoo")
+    ## library("RUnit")
+    ## library("tsdb")
+    ## library("zoo", warn.conflicts = FALSE)
     y <- ts_table(11:15, as.Date("2016-1-1")-5:1, "close")
 
     checkEquals(y,
@@ -50,9 +50,9 @@ test.ts_table <- function() {
 
 test.read_ts_tables <- function() {
 
-    library("RUnit")
-    library("tsdb")
-    library("zoo")
+    ## library("RUnit")
+    ## library("tsdb")
+    ## library("zoo", warn.conflicts = FALSE)
     x <- ts_table(data = 11:15,
                   timestamp = as.Date("2016-1-1") + 1:5,
                   columns = "A")
@@ -69,12 +69,32 @@ test.read_ts_tables <- function() {
     tmp <- read_ts_tables(c("A", "BA"), dir, columns = c("A"),
                           start = "2016-1-1", drop.weekends = FALSE)
 
-    checkEquals(tmp[[1]],
+    checkEquals(tmp$data,
                 structure(c(11, 12, 13, 14, 15, 6, 7, 8, 9, 10),
                           .Dim = c(5L, 2L)))
+    checkEquals(tmp$timestamp,
+                structure(c(16802, 16803, 16804,
+                            16805, 16806),
+                          class = "Date"))
 
+    tmp <- read_ts_tables(c("A", "BA"), dir, columns = c("A"),
+                          start = "2016-1-1",
+                          drop.weekends = FALSE,
+                          return.class = "zoo")
+    colnames(tmp) <- c("A1", "A2")
+
+    checkEquals(tmp,
+                structure(c(11, 12, 13, 14, 15, 6, 7, 8, 9, 10),
+                          .Dim = c(5L, 2L),
+                          .Dimnames = list(NULL, c("A1", "A2")),
+                          index = structure(
+                              c(16802, 16803, 16804, 16805, 16806),
+                              class = "Date"),
+                          class = "zoo"))
+
+                
+    
     ## check POSIXct
-
     z1 <- ts_table(11:15,
                    as.POSIXct("2016-1-1 10:00:00", tz = "UTC")+0:4,
                    "close")
@@ -86,7 +106,7 @@ test.read_ts_tables <- function() {
     z12 <- read_ts_tables(c("X1", "X2"), dir, columns = "close",
                           start = as.POSIXct("2016-1-1 10:00:00", tz = "UTC"),
                           end = as.POSIXct("2016-1-1 10:00:20", tz = "UTC"))
-
+    
     checkEquals(z12$data,
                 structure(c(11, 12, 13, 14, 15, NA,
                             NA, 1, 2, 3, 4, 5),
@@ -94,7 +114,7 @@ test.read_ts_tables <- function() {
     
     checkEquals(z12$timestamp,
                 as.POSIXct("2016-1-1 10:00:00", tz = "UTC")+0:5)
-
+    
     z12 <- read_ts_tables(c("X1", "X2"), dir, columns = "close",
                           start = "2016-1-1 11:00:00",
                           end   = "2016-1-1 11:00:20")
@@ -106,27 +126,22 @@ test.read_ts_tables <- function() {
     
     checkEquals(z12$timestamp,
                 as.POSIXct("2016-1-1 10:00:00", tz = "UTC")+0:5)
-
-
+    
+    
     
     ## check empty file
     writeLines('"timestamp","close"', file.path(dir, "empty"))
     em <- read_ts_tables("empty", dir)
     checkEquals(em$timestamp, structure(numeric(0), class = "Date"))
     checkEquals(em$data, structure(numeric(0), .Dim = 0:1))
-
-
-
-    
-
     
 }
 
 test.write_ts_table <- function() {
 
-    ## require("RUnit")
-    ## require("tsdb")
-    ## require("zoo")
+    ## library("RUnit")
+    ## library("tsdb")
+    ## library("zoo")
     dir <- tempdir()
 
     x <- ts_table(data = 11:15,
@@ -319,15 +334,15 @@ test.write_ts_table <- function() {
 
 test.zoo <- function() {
 
-    ## require("RUnit")
-    ## require("tsdb")
-    library("zoo", warn.conflicts = FALSE)
+    ## library("RUnit")
+    ## library("tsdb")
+    ## library("zoo", warn.conflicts = FALSE)
 
     y <- ts_table(11:15, as.Date("2016-1-1")-5:1, "close")
     checkEqualsNumeric(zoo::as.zoo(y),
                        zoo::zoo(as.matrix(y), as.Date("2016-1-1")-5:1))
 
-    y <- zoo(11:15, as.Date("2016-1-1")-5:1)
+    y <- zoo::zoo(11:15, as.Date("2016-1-1")-5:1)
     checkEquals(as.ts_table(y, columns = "close"),
                 structure(11:15,
                           .Dim = c(5L, 1L),
