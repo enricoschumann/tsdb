@@ -1,8 +1,8 @@
 Package: tsdb
 Type: Package
 Title: Terribly-Simple Data Base for Time Series
-Version: 0.6-1
-Date: 2019-03-26
+Version: 0.6-2
+Date: 2019-03-31
 Maintainer: Enrico Schumann <es@enricoschumann.net>
 Authors@R: person(given = "Enrico", family = "Schumann", 
                   role  = c("aut", "cre"),
@@ -12,8 +12,8 @@ Description: A terribly-simple data base for numeric
   time series, written purely in R, so no external
   database-software is needed. Series are stored in
   plain-text files (the most-portable and enduring file
-  type) in CSV format; timestamps are encoded using R's
-  native numeric representation for Date/POSIXct, which
+  type) in CSV format. Timestamps are encoded using R's
+  native numeric representation for 'Date'/'POSIXct', which
   makes them fast to parse, but keeps them accessible
   with other software. The package provides tools for
   saving and updating series in this standardised
