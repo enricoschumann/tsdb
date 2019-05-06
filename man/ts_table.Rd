@@ -38,7 +38,7 @@ ts_table(data, timestamp, columns)
     \item{columns}{a character vector that provides the
       columns names}
   }
-  
+
   There may be other attributes as well, but these three
   are always present.
 
@@ -56,8 +56,6 @@ ts_table(data, timestamp, columns)
   vector to an actual timestamp. For this, they may use
   the function \code{\link{ttime}} (\sQuote{translate time}).
 
-  
-  
 }
 \value{
   a \code{ts_table}

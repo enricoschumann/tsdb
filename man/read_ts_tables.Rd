@@ -5,7 +5,7 @@
 }
 \description{
 
-  Read time-series data from files and merge them. 
+  Read time-series data from files and merge them.
 
 }
 \usage{
@@ -38,20 +38,20 @@ read_ts_tables(file, dir, t.type = "guess",
     character.
 }
 \item{return.class}{
-  
+
   \code{NULL} (default) or character: if \code{NULL}, a list is
   returned. Also supported are \code{zoo},
   \code{\link{data.frame}} and \code{\link{ts_table}}.
-  
+
 }
 \item{drop.weekends}{
   logical
 }
 \item{column.names}{
-  
+
   character: a format string for column names; may contain
   \code{\%dir\%}, \code{\%file\%}, and \code{\%column\%}
-  
+
 }
 \item{backend}{
   character: currently, only \sQuote{\code{csv}} is fully supported
@@ -62,10 +62,10 @@ read_ts_tables(file, dir, t.type = "guess",
   from package \pkg{data.table}
 }
 \item{frequency}{
-  
+
   character: only used when \code{t.type} is
   \code{POSIXct} (or guessed to be \code{POSIXct})
-  
+
 }
 }
 \details{
@@ -103,5 +103,4 @@ read_ts_tables(c("t1", "t2"),
                dir = d, columns = "A",
                return.class = "zoo",
                column.names = "\%file\%.\%column\%")
-
 }

@@ -31,7 +31,7 @@
   \code{\link{read_ts_tables}} for storing and loading a
   \code{\link{ts_table}} (or several).
 
-  See the tutorial at
+  For getting started, see the tutorial at
   \url{https://gitlab.com/enricoschumann/tsdb/blob/master/README.org}
   or
   \url{https://github.com/enricoschumann/tsdb/blob/master/README.org} .

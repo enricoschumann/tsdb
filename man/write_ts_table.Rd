@@ -22,22 +22,22 @@ write_ts_table(ts, dir, file, add = FALSE, overwrite = FALSE,
     character
   }
   \item{add}{
-    
+
     logical: if \code{TRUE}, add data with timestamps
     that are not in a file.
-    
+
   }
   \item{overwrite}{
-    
+
     logical: overwrite existing file when data
     differs. \code{overwrite} implies \code{add}.
-    
+
   }
   \item{replace.file}{
-    
+
     logical: if \code{TRUE}, an existing file is deleted
     and replaced by a new file (i.e. containing \code{ts})
-    
+
   }
   \item{backend}{
 
@@ -45,7 +45,7 @@ write_ts_table(ts, dir, file, add = FALSE, overwrite = FALSE,
     are supported
 
   }
-  
+
 }
 \details{
 
@@ -68,7 +68,6 @@ write_ts_table(ts, dir, file, add = FALSE, overwrite = FALSE,
   no data will be removed from the file: timestamps not
   in \code{ts} remain unchanged in the file.
 
-  
 }
 \value{
   Invisibly, the number of data rows written to a file.
