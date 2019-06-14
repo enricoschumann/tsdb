@@ -1,6 +1,15 @@
+2019-06-14  Enrico Schumann  <es@enricoschumann.net>
+
+        * DESCRIPTION (Version): 0.6-3
+
+        * R/functions.R (read_ts_tables): fixed --
+        column names are no longer corrected by
+        'read.table' (i.e. check.names is now set to
+        FALSE)
+
 2019-03-21  Enrico Schumann  <es@enricoschumann.net>
 
-	* DESCRIPTION (Version): 0.6-0
+        * DESCRIPTION (Version): 0.6-0
 
         * NAMESPACE: import 'datetimeutils::roundPOSIXt'
 

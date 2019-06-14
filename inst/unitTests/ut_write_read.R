@@ -15,7 +15,7 @@ test.ts_table <- function() {
                           columns = "close",
                           class = "ts_table"))
 
-    tmp <- as.matrix(11:15); colnames(tmp) <- "close"    
+    tmp <- as.matrix(11:15); colnames(tmp) <- "close"
     checkEquals(zoo::as.zoo(y),
                 zoo::zoo(tmp, as.Date("2016-1-1")-5:1))
 
@@ -92,8 +92,8 @@ test.read_ts_tables <- function() {
                               class = "Date"),
                           class = "zoo"))
 
-                
-    
+
+
     ## check POSIXct
     z1 <- ts_table(11:15,
                    as.POSIXct("2016-1-1 10:00:00", tz = "UTC")+0:4,
@@ -106,35 +106,53 @@ test.read_ts_tables <- function() {
     z12 <- read_ts_tables(c("X1", "X2"), dir, columns = "close",
                           start = as.POSIXct("2016-1-1 10:00:00", tz = "UTC"),
                           end = as.POSIXct("2016-1-1 10:00:20", tz = "UTC"))
-    
+
     checkEquals(z12$data,
                 structure(c(11, 12, 13, 14, 15, NA,
                             NA, 1, 2, 3, 4, 5),
                           .Dim = c(6L, 2L)))
-    
+
     checkEquals(z12$timestamp,
                 as.POSIXct("2016-1-1 10:00:00", tz = "UTC")+0:5)
-    
+
     z12 <- read_ts_tables(c("X1", "X2"), dir, columns = "close",
                           start = "2016-1-1 11:00:00",
                           end   = "2016-1-1 11:00:20")
-    
+
     checkEquals(z12$data,
                 structure(c(11, 12, 13, 14, 15, NA,
                             NA, 1, 2, 3, 4, 5),
                           .Dim = c(6L, 2L)))
-    
+
     checkEquals(z12$timestamp,
                 as.POSIXct("2016-1-1 10:00:00", tz = "UTC")+0:5)
-    
-    
-    
+
+
+
     ## check empty file
     writeLines('"timestamp","close"', file.path(dir, "empty"))
     em <- read_ts_tables("empty", dir)
     checkEquals(em$timestamp, structure(numeric(0), class = "Date"))
     checkEquals(em$data, structure(numeric(0), .Dim = 0:1))
-    
+
+}
+
+test.read_ts_tables__spaces_in_names <- function() {
+
+    x <- ts_table(data = 1,
+                  timestamp = as.Date("2016-1-1") ,
+                  columns = "A B")
+    dir <- tempdir()
+    write_ts_table(x, dir, "ab", replace.file = TRUE)
+    checkEquals(read_ts_tables("ab", dir)$columns, "A B")
+
+    x <- ts_table(data = cbind(1, 1),
+                  timestamp = as.Date("2016-1-1") ,
+                  columns = c("A B", "C D"))
+    dir <- tempdir()
+    write_ts_table(x, dir, "ab", replace.file = TRUE)
+    checkEquals(read_ts_tables("ab", dir)$columns, c("A B", "C D"))
+
 }
 
 test.write_ts_table <- function() {
@@ -155,10 +173,10 @@ test.write_ts_table <- function() {
                 c("\"timestamp\",\"x\"",
                   "16802,11",
                   "16803,12",
-                  "16804,13", 
+                  "16804,13",
                   "16805,14",
                   "16806,15"))
-    
+
     ## add = TRUE: one new data point is found
     x <- ts_table(data = 11:16,
                   timestamp = as.Date("2016-1-1") + 1:6,
@@ -169,12 +187,12 @@ test.write_ts_table <- function() {
                 c("\"timestamp\",\"x\"",
                   "16802,11",
                   "16803,12",
-                  "16804,13", 
+                  "16804,13",
                   "16805,14",
                   "16806,15",
                   "16807,16"))
 
-    
+
     ## ... write again: no new data point is written
     ans <- write_ts_table(x, dir, "x", add = TRUE)
     checkEquals(ans, 0)
@@ -182,12 +200,12 @@ test.write_ts_table <- function() {
                 c("\"timestamp\",\"x\"",
                   "16802,11",
                   "16803,12",
-                  "16804,13", 
+                  "16804,13",
                   "16805,14",
                   "16806,15",
                   "16807,16"))
 
-    
+
     ## add a single new data point
     x <- ts_table(data = 1,
                   timestamp = as.Date("2015-1-1"),
@@ -199,12 +217,12 @@ test.write_ts_table <- function() {
                   "16436,1",
                   "16802,11",
                   "16803,12",
-                  "16804,13", 
+                  "16804,13",
                   "16805,14",
                   "16806,15",
                   "16807,16"))
 
-    
+
     ## ... write again: no new data point is written
     x <- ts_table(data = 1,
                   timestamp = as.Date("2015-1-1"),
@@ -216,7 +234,7 @@ test.write_ts_table <- function() {
                   "16436,1",
                   "16802,11",
                   "16803,12",
-                  "16804,13", 
+                  "16804,13",
                   "16805,14",
                   "16806,15",
                   "16807,16"))
@@ -233,7 +251,7 @@ test.write_ts_table <- function() {
                   "16436,1",
                   "16802,11",
                   "16803,12",
-                  "16804,13", 
+                  "16804,13",
                   "16805,14",
                   "16806,15",
                   "16807,16"))
@@ -245,11 +263,11 @@ test.write_ts_table <- function() {
                   "16436,1",
                   "16802,11",
                   "16803,12",
-                  "16804,13", 
+                  "16804,13",
                   "16805,14",
                   "16806,15",
                   "16807,16"))
-    
+
     ans <- write_ts_table(x, dir, "x", add = TRUE, overwrite = TRUE)
     checkEquals(ans, 0)
     checkEquals(readLines(file.path(dir, "x")),
@@ -257,7 +275,7 @@ test.write_ts_table <- function() {
                   "16436,1",
                   "16802,11",
                   "16803,12",
-                  "16804,13", 
+                  "16804,13",
                   "16805,14",
                   "16806,15",
                   "16807,16"))
@@ -269,7 +287,7 @@ test.write_ts_table <- function() {
                   "16436,1",
                   "16802,11",
                   "16803,12",
-                  "16804,13", 
+                  "16804,13",
                   "16805,14",
                   "16806,15",
                   "16807,16"))
@@ -285,7 +303,7 @@ test.write_ts_table <- function() {
                   "16436,1",  ## value remains unchanged
                   "16802,11",
                   "16803,12",
-                  "16804,13", 
+                  "16804,13",
                   "16805,14",
                   "16806,15",
                   "16807,16"))
@@ -297,7 +315,7 @@ test.write_ts_table <- function() {
                   "16436,2",  ## value is changed because of 'overwrite'
                   "16802,11",
                   "16803,12",
-                  "16804,13", 
+                  "16804,13",
                   "16805,14",
                   "16806,15",
                   "16807,16"))
@@ -306,7 +324,7 @@ test.write_ts_table <- function() {
     x <- ts_table(numeric(0),
                   timestamp = Sys.Date()[0],
                   columns = "TEST")
-    
+
     ans <- write_ts_table(x, dir, "EMPTY_FILE")
     checkEquals(ans, 0)
     checkTrue(file.exists(file.path(dir, "EMPTY_FILE")))
@@ -329,7 +347,7 @@ test.write_ts_table <- function() {
     ans <- read_ts_tables("1970", dir, drop.weekends = FALSE)
     checkEquals(ans$timestamp, c(dates, as.Date("1970-1-6")))
     checkEqualsNumeric(ans$data, c(seq_along(dates), 99))
-    
+
 }
 
 test.zoo <- function() {
@@ -346,7 +364,7 @@ test.zoo <- function() {
     checkEquals(as.ts_table(y, columns = "close"),
                 structure(11:15,
                           .Dim = c(5L, 1L),
-                          timestamp = c(16796, 16797, 
+                          timestamp = c(16796, 16797,
                                         16798, 16799, 16800),
                           t.type = "Date", columns = "close",
                           class = "ts_table"))

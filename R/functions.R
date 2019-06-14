@@ -268,12 +268,14 @@ read_ts_tables <- function(file, dir, t.type = "guess",
                                   sep = ",",
                                   stringsAsFactors = FALSE,
                                   header = TRUE,
-                                  colClasses = "numeric")
+                                  colClasses = "numeric",
+                                  check.names = FALSE)
             else if (read.fn == "fread")
                 tmp <- data.table::fread(dfile[[i]],
                                          sep = ",",
                                          header = TRUE,
-                                         data.table = FALSE)
+                                         data.table = FALSE,
+                                         check.names = FALSE)
             else
                 stop("unknown ", sQuote("read.fn"))
             ii <- fmatch(tmp[[1L]], timestamp, nomatch = 0L)
