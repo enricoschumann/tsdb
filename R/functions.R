@@ -245,7 +245,10 @@ read_ts_tables <- function(file, dir, t.type = "guess",
                          as.POSIXct(start)  ## in case it is POSIXlt
 
             if (missing(end))
-                end <- as.POSIXct(previous_businessday(Sys.Date()))
+                if (drop.weekends)
+                    end <- as.POSIXct(previous_businessday(Sys.Date()))
+                else
+                    end <- Sys.time()
             else
                 end <- as.POSIXct(end)
             if (frequency != "1 sec") {
@@ -278,6 +281,9 @@ read_ts_tables <- function(file, dir, t.type = "guess",
                                          check.names = FALSE)
             else
                 stop("unknown ", sQuote("read.fn"))
+            ii <- tmp[[1L]] >= timestamp[1L] &
+                tmp[[1L]] <= timestamp[length(timestamp)]
+            tmp <- tmp[ii, ]
             ii <- fmatch(tmp[[1L]], timestamp, nomatch = 0L)
             tmp.names <- colnames(tmp)
             if (!all(columns %in% tmp.names)) {
@@ -286,7 +292,7 @@ read_ts_tables <- function(file, dir, t.type = "guess",
                 colnames(tmp) <- c(tmp.names,
                                    columns[!(columns %in% tmp.names)])
             }
-            res <- tmp[ , columns, drop = FALSE][ii > 0L, ]
+            res <- tmp[, columns, drop = FALSE][ii > 0L, ]
             if (!is.null(res))
                 results[ii, (nc*(i-1)+1):(nc*i)] <- as.matrix(res)
         }
