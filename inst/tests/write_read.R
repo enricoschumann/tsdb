@@ -11,8 +11,15 @@ d <- tempdir()
 x <- 1:nd
 z0 <- zoo(x, as.Date("2007-12-31") + x)
 
-trials <- 5
+trials <- 10
 
+
+message("")
+message("Run ", trials, " trials:")
+message("  ", nf, " files of length ", nd)
+message("")
+
+message("Write files", appendLF = FALSE)
 t <- system.time(
     for (i in 1:trials ) {
         for (i in 1:nf) {
@@ -21,8 +28,11 @@ t <- system.time(
                            file = i, dir = d, replace.file = TRUE)}
     }
 )
-t[[3]]/trials
+message(":                   ", round(t[[3]]/trials, 2), " seconds")
 
+
+
+message("Read/merge 10 years", appendLF = FALSE)
 t <- system.time(
     for (i in 1:trials ) {
     read_ts_tables(as.character(1:nf), dir = d,
@@ -30,8 +40,11 @@ t <- system.time(
                    return.class = "zoo", column.names = "%file%")
     }
 )
-t[[3]]/trials
+message(":           ", round(t[[3]]/trials, 2), " seconds")
 
+
+
+message("Read (fread)/merge 10 years", appendLF = FALSE)
 t <- system.time(
     for (i in 1:trials ) {
     read_ts_tables(as.character(1:nf), dir = d,
@@ -40,4 +53,30 @@ t <- system.time(
                    read.fn = "fread")
     }
 )
-t[[3]]/trials
+message(":   ", round(t[[3]]/trials, 2), " seconds")
+
+
+
+
+message("Read/merge", appendLF = FALSE)
+t <- system.time(
+    for (i in 1:trials ) {
+    read_ts_tables(as.character(1:nf), dir = d,
+                   return.class = "zoo", column.names = "%file%")
+    }
+)
+message(":                    ",
+        round(t[[3]]/trials, 2), " seconds")
+
+
+
+message("Read (fread)/merge", appendLF = FALSE)
+t <- system.time(
+    for (i in 1:trials ) {
+    read_ts_tables(as.character(1:nf), dir = d,
+                   return.class = "zoo", column.names = "%file%",
+                   read.fn = "fread")
+    }
+)
+message(":            ",
+        round(t[[3]]/trials, 2), " seconds")
