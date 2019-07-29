@@ -230,9 +230,13 @@ read_ts_tables <- function(file, dir, t.type = "guess",
                          as.Date(start)
 
             end   <- if (missing(end))
-                         previous_businessday(Sys.Date())
+                         if (drop.weekends)
+                             previous_businessday(Sys.Date())
+                         else
+                             Sys.Date()
                      else
                          as.Date(end)
+
             timestamp <- seq(start, end , "1 day")
             if (drop.weekends)
                 timestamp <- timestamp[is_businessday(timestamp)]
@@ -244,13 +248,14 @@ read_ts_tables <- function(file, dir, t.type = "guess",
                      else
                          as.POSIXct(start)  ## in case it is POSIXlt
 
-            if (missing(end))
-                if (drop.weekends)
-                    end <- as.POSIXct(previous_businessday(Sys.Date()))
-                else
-                    end <- Sys.time()
-            else
-                end <- as.POSIXct(end)
+            end   <- if (missing(end))
+                         if (drop.weekends)
+                             as.POSIXct(previous_businessday(Sys.Date()))
+                         else
+                             Sys.time()
+                     else
+                         as.POSIXct(end)
+
             if (frequency != "1 sec") {
                 start <- roundPOSIXt(start, frequency)
                 end   <- roundPOSIXt(end,   frequency, up = TRUE)

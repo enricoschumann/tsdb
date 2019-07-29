@@ -1,9 +1,8 @@
 2019-07-29  Enrico Schumann  <es@enricoschumann.net>
 
-        * R/functions.R (read_ts_tables): fixed -- for
-        timestamps of class 'POSIXct', when 'end' was
-        missing, the function would always drop
-        weekends
+        * R/functions.R (read_ts_tables): fixed -- when
+	'end' was missing, the function would always
+	drop weekends
 
 2019-06-14  Enrico Schumann  <es@enricoschumann.net>
 
