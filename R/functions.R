@@ -168,7 +168,8 @@ read_ts_tables <- function(file, dir, t.type = "guess",
                            column.names = "%dir%/%file%::%column%",
                            backend = "csv",
                            read.fn = NULL,
-                           frequency = "1 sec") {
+                           frequency = "1 sec",
+                           timestamp) {
 
     backend <- tolower(backend)
 
@@ -219,6 +220,7 @@ read_ts_tables <- function(file, dir, t.type = "guess",
             columns <- tmp[-1L]
         }
 
+        do.match <- length(dfile) > 1L || !missing(timestamp)
         if (t.type == "Date") {
             start <- if (missing(start) && length(timestamp1))
                          ttime(timestamp1, "numeric", "Date")
@@ -236,11 +238,13 @@ read_ts_tables <- function(file, dir, t.type = "guess",
                              Sys.Date()
                      else
                          as.Date(end)
-
-            timestamp <- seq(start, end , "1 day")
-            if (drop.weekends)
-                timestamp <- timestamp[is_businessday(timestamp)]
-            timestamp <- c(unclass(timestamp))
+            if (do.match) {
+                if (missing(timestamp))
+                    timestamp <- seq(start, end , "1 day")
+                if (drop.weekends)
+                    timestamp <- timestamp[is_businessday(timestamp)]
+                timestamp <- c(unclass(timestamp))
+            }
         } else if (t.type == "POSIXct") {
             start <- if (missing(start))
                          ttime(timestamp1,
@@ -256,20 +260,25 @@ read_ts_tables <- function(file, dir, t.type = "guess",
                      else
                          as.POSIXct(end)
 
-            if (frequency != "1 sec") {
+            if (!is.na(frequency) && frequency != "1 sec" && do.match) {
                 start <- roundPOSIXt(start, frequency)
                 end   <- roundPOSIXt(end,   frequency, up = TRUE)
             }
-            timestamp <- seq(start, end , frequency)
-            if (drop.weekends)
-                timestamp <- timestamp[is_businessday(timestamp)]
-            timestamp <- c(unclass(timestamp))
+            if (do.match) {
+                if (missing(timestamp))
+                    timestamp <- seq(start, end , frequency)
+                if (drop.weekends)
+                    timestamp <- timestamp[is_businessday(timestamp)]
+                timestamp <- c(unclass(timestamp))
+            }
         } else
             stop("unknown ", sQuote("t.type"))
 
         nc <- length(columns)
-        results <- array(NA_real_,
-                         dim = c(length(timestamp), length(dfile)*nc))
+        if (do.match)
+            results <- array(NA_real_,
+                             dim = c(length(timestamp),
+                                     length(dfile)*nc))
         for (i in seq_along(dfile)) {
             if (is.null(read.fn))
                 tmp <- read.table(dfile[[i]],
@@ -286,10 +295,7 @@ read_ts_tables <- function(file, dir, t.type = "guess",
                                          check.names = FALSE)
             else
                 stop("unknown ", sQuote("read.fn"))
-            ii <- tmp[[1L]] >= timestamp[1L] &
-                tmp[[1L]] <= timestamp[length(timestamp)]
-            tmp <- tmp[ii, ]
-            ii <- fmatch(tmp[[1L]], timestamp, nomatch = 0L)
+
             tmp.names <- colnames(tmp)
             if (!all(columns %in% tmp.names)) {
                 warning("columns missing")
@@ -297,13 +303,25 @@ read_ts_tables <- function(file, dir, t.type = "guess",
                 colnames(tmp) <- c(tmp.names,
                                    columns[!(columns %in% tmp.names)])
             }
-            res <- tmp[, columns, drop = FALSE][ii > 0L, ]
-            if (!is.null(res))
-                results[ii, (nc*(i-1)+1):(nc*i)] <- as.matrix(res)
-        }
+            if (do.match) {
+                ii <- fmatch(tmp[[1L]], timestamp, nomatch = 0L)
+                res <- tmp[, columns, drop = FALSE][ii > 0L, ]
+                if (!is.null(res))
+                    results[ii, (nc*(i-1)+1):(nc*i)] <- as.matrix(res)
+            } else {
+                timestamp <- tmp[[1L]]
+                results <- as.matrix(tmp[, columns, drop = FALSE])
 
+                ## if 'results' has no rows, 'as.matrix'
+                ## will return an empty array of mode
+                ## 'logical'
+                if (storage.mode(results) == "logical")
+                    storage.mode(results) <- "numeric"
+            }
+        }
+        
         rm <- rowSums(is.na(results)) == dim(results)[[2L]]
-        results <- results[!rm, ,drop = FALSE]
+        results <- results[!rm, , drop = FALSE]
         timestamp <- timestamp[!rm]
         colnames <- rep.int(column.names, dim(results)[[2L]])
         .dir <- rep(dir, each = length(columns))

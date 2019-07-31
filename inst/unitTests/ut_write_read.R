@@ -94,7 +94,7 @@ test.read_ts_tables <- function() {
 
 
 
-    ## check POSIXct
+    ## POSIXct: no fractions
     z1 <- ts_table(11:15,
                    as.POSIXct("2016-1-1 10:00:00", tz = "UTC")+0:4,
                    "close")
@@ -129,12 +129,35 @@ test.read_ts_tables <- function() {
 
 
 
-    ## check empty file
+    ## empty file
     writeLines('"timestamp","close"', file.path(dir, "empty"))
     em <- read_ts_tables("empty", dir)
     checkEquals(em$timestamp, structure(numeric(0), class = "Date"))
-    checkEquals(em$data, structure(numeric(0), .Dim = 0:1))
+    checkEquals(mode(em$data), "numeric")
+    checkEquals(length(em$data), 0)
 
+
+
+    ## POSIXct: fractions
+    x <- ts_table(data = 1:5,
+                  timestamp = as.POSIXct("2019-1-1 10:00:00", tz = "UTC") +
+                      seq(0.1,0.5,by = 0.1),
+                  columns = "P")
+    write_ts_table(x, dir, "P", replace.file = TRUE)
+    ans <- read_ts_tables("P", dir = dir)
+    checkEqualsNumeric(c(ans$data), 1:5)
+    checkEqualsNumeric(ans$timestamp, tsdb:::.timestamp(x))
+
+    
+    ## POSIXct: fractions && specify timestamp
+    ans <- read_ts_tables("P", dir = dir,
+                          timestamp = as.POSIXct("2019-1-1 10:00:00",
+                                                 tz = "UTC") + 0.3)
+    checkEqualsNumeric(c(ans$data), 3)
+    checkEqualsNumeric(ans$timestamp,
+                       as.POSIXct("2019-1-1 10:00:00", tz = "UTC") + 0.3)
+    
+    
 }
 
 test.read_ts_tables__spaces_in_names <- function() {
