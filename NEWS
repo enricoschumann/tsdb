@@ -1,5 +1,15 @@
 v0.6-4  (2019-??-)); not yet released)
 
+  o a script with some timing tests is available at
+  
+      https://github.com/enricoschumann/tsdb/blob/master/inst/tests/write_read.R
+    and
+      https://gitlab.com/enricoschumann/tsdb/blob/master/inst/tests/write_read.R
+
+    If the package is installed, the file may also be
+    found with
+        system.file("tests/write_read.R", package = "tsdb")
+
 v0.6-3  (2019-06-14)
 
   o read_ts_tables: fixed -- column names are no
