@@ -2,28 +2,28 @@ Package: tsdb
 Type: Package
 Title: Terribly-Simple Data Base for Time Series
 Version: 0.6-4
-Date: 2019-06-14
+Date: 2019-08-15
 Maintainer: Enrico Schumann <es@enricoschumann.net>
 Authors@R: person(given = "Enrico", family = "Schumann",
-                  role  = c("aut", "cre"),
-                  email = "es@enricoschumann.net",
-                  comment = c(ORCID = "0000-0001-7601-6576"))
+                  role = c("aut", "cre"),
+		  email = "es@enricoschumann.net",
+		  comment = c(ORCID = "0000-0001-7601-6576"))
 Description: A terribly-simple data base for numeric
   time series, written purely in R, so no external
   database-software is needed. Series are stored in
   plain-text files (the most-portable and enduring file
   type) in CSV format. Timestamps are encoded using R's
-  native numeric representation for 'Date'/'POSIXct', which
-  makes them fast to parse, but keeps them accessible
-  with other software. The package provides tools for
-  saving and updating series in this standardised
-  format, for retrieving and joining data, for
-  summarising files and directories, and for coercing
-  series from and to other data types (such as 'zoo'
-  series).
+  native numeric representation for 'Date'/'POSIXct',
+  which makes them fast to parse, but keeps them
+  accessible with other software. The package provides
+  tools for saving and updating series in this
+  standardised format, for retrieving and joining data,
+  for summarising files and directories, and for
+  coercing series from and to other data types (such as
+  'zoo' series).
 License: GPL-3
 Imports: datetimeutils, fastmatch, utils, zoo
-Suggests: DBI, MonetDBLite, data.table
+Suggests: DBI, MonetDBLite, RUnit, data.table, tinytest
 URL: http://enricoschumann.net/R/packages/tsdb,
      https://github.com/enricoschumann/tsdb,
      https://gitlab.com/enricoschumann/tsdb
