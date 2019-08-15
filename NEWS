@@ -1,7 +1,9 @@
-v0.6-4  (2019-??-)); not yet released)
+v0.6-4  (2019-??-??; not yet released)
+
+  o read_ts_tables: the default value for 'drop.weekends'
+    has changed from TRUE to FALSE
 
   o a script with some timing tests is available at
-  
       https://github.com/enricoschumann/tsdb/blob/master/inst/tests/write_read.R
     and
       https://gitlab.com/enricoschumann/tsdb/blob/master/inst/tests/write_read.R
@@ -17,6 +19,10 @@ v0.6-3  (2019-06-14)
     (before, column names were by mistake changed
     into `syntactically valid names'; e.g., spaces
     in names were substituted by dots '.')
+
+v0.6-3  (2019-03-31)
+
+  o CRAN release; no user-visible changes
 
 v0.6-1  (2019-03-26)
 

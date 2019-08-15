@@ -31,11 +31,20 @@ ttime <- function(x, from = "datetime", to = "numeric",
 ## --------------------- ts_table
 
 ts_table <- function(data, timestamp, columns) {
+
+    if (missing(data) && missing(timestamp)) {
+        ans <- as.matrix(numeric(0))        
+        attr(ans, "timestamp") <- numeric(0)
+        attr(ans, "t.type") <- "Date"
+        attr(ans, "columns") <- columns
+        class(ans) <- "ts_table"
+        return(ans)
+    }
+
     if (!inherits(timestamp, "Date") &&
         !inherits(timestamp, "POSIXt"))
         stop(sQuote("timestamp"), " must be Date or POSIXt")
-    ## TODO if character, match regexp and then coerce
-    ##      to Date/POSIXct?
+            
     if (inherits(timestamp, "POSIXlt")) {
         timestamp <- ttime(as.POSIXct(timestamp))
         t.type <- "POSIXct"
@@ -52,6 +61,8 @@ ts_table <- function(data, timestamp, columns) {
     if (missing(columns))
         columns <- colnames(ans)
     ans <- unname(ans)
+    if (length(timestamp) != nrow(ans))
+        stop("length of timestamp does not match number of rows")
     if (is.null(columns))
         stop("no column names, and ", sQuote("columns"), " not provided")
     if (ncol(ans) != length(columns))
@@ -164,7 +175,7 @@ write_ts_table <- function(ts, dir, file,
 read_ts_tables <- function(file, dir, t.type = "guess",
                            start, end, columns,
                            return.class = NULL,
-                           drop.weekends = TRUE,
+                           drop.weekends = FALSE,
                            column.names = "%dir%/%file%::%column%",
                            backend = "csv",
                            read.fn = NULL,
@@ -305,18 +316,22 @@ read_ts_tables <- function(file, dir, t.type = "guess",
             }
             if (do.match) {
                 ii <- fmatch(tmp[[1L]], timestamp, nomatch = 0L)
-                res <- tmp[, columns, drop = FALSE][ii > 0L, ]
+                res <- tmp[, columns, drop = FALSE][ii > 0L, , drop=FALSE]
                 if (!is.null(res))
                     results[ii, (nc*(i-1)+1):(nc*i)] <- as.matrix(res)
             } else {
                 timestamp <- tmp[[1L]]
                 results <- as.matrix(tmp[, columns, drop = FALSE])
-
+                                
                 ## if 'results' has no rows, 'as.matrix'
                 ## will return an empty array of mode
                 ## 'logical'
                 if (storage.mode(results) == "logical")
                     storage.mode(results) <- "numeric"
+
+                ii <- timestamp >= start & timestamp <= end
+                timestamp <- timestamp[ii]
+                results <- results[ii, , drop = FALSE]
             }
         }
         
