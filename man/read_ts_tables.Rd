@@ -12,11 +12,12 @@
 read_ts_tables(file, dir, t.type = "guess",
                start, end, columns,
                return.class = NULL,
-               drop.weekends = TRUE,
+               drop.weekends = FALSE,
                column.names = "\%dir\%/\%file\%::\%column\%",
                backend = "csv",
                read.fn = NULL,
-               frequency = "1 sec")
+               frequency = "1 sec",
+               timestamp)
 }
 \arguments{
   \item{file}{
@@ -29,10 +30,10 @@ read_ts_tables(file, dir, t.type = "guess",
     character: \code{guess}, \code{Date} or \code{POSIXct}
 }
   \item{start}{
-    character
+    a timestamp
 }
   \item{end}{
-    character
+    a timestamp
 }
   \item{columns}{
     character.
@@ -54,7 +55,10 @@ read_ts_tables(file, dir, t.type = "guess",
 
 }
 \item{backend}{
-  character: currently, only \sQuote{\code{csv}} is fully supported
+
+  character: currently, only \sQuote{\code{csv}} is
+  fully supported
+
 }
 \item{read.fn}{
   \code{NULL} or character: use \sQuote{\code{fread}}
@@ -66,6 +70,12 @@ read_ts_tables(file, dir, t.type = "guess",
   character: only used when \code{t.type} is
   \code{POSIXct} (or guessed to be \code{POSIXct})
 
+}
+\item{timestamp}{
+  
+  a vector of timestamps: if specified, only data at
+  the times in \code{timestamp} are selected
+  
 }
 }
 \details{
