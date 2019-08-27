@@ -33,7 +33,7 @@ ttime <- function(x, from = "datetime", to = "numeric",
 ts_table <- function(data, timestamp, columns) {
 
     if (missing(data) && missing(timestamp)) {
-        ans <- as.matrix(numeric(0))        
+        ans <- as.matrix(numeric(0))
         attr(ans, "timestamp") <- numeric(0)
         attr(ans, "t.type") <- "Date"
         attr(ans, "columns") <- columns
@@ -44,7 +44,7 @@ ts_table <- function(data, timestamp, columns) {
     if (!inherits(timestamp, "Date") &&
         !inherits(timestamp, "POSIXt"))
         stop(sQuote("timestamp"), " must be Date or POSIXt")
-            
+
     if (inherits(timestamp, "POSIXlt")) {
         timestamp <- ttime(as.POSIXct(timestamp))
         t.type <- "POSIXct"
@@ -155,18 +155,6 @@ write_ts_table <- function(ts, dir, file,
                         col.names = c("timestamp", columns),
                         sep = ",")
         }
-    } else if (backend == "monetdb") {
-
-        if (!inherits(dir, "MonetDBEmbeddedConnection")) {
-            dir <- DBI::dbConnect(MonetDBLite::MonetDBLite(), dir)
-            on.exit(DBI::dbDisconnect(dir, shutdown = TRUE))
-        }
-
-        df <- data.frame(timestamp, unclass(ts))
-        colnames(df) <- c("timestamp", columns)
-        DBI::dbWriteTable(dir, DBI::dbQuoteIdentifier(dir, file), df,
-                          overwrite = overwrite)
-
     } else
         stop("unknown backend")
     invisible(ans)
@@ -322,7 +310,7 @@ read_ts_tables <- function(file, dir, t.type = "guess",
             } else {
                 timestamp <- tmp[[1L]]
                 results <- as.matrix(tmp[, columns, drop = FALSE])
-                                
+
                 ## if 'results' has no rows, 'as.matrix'
                 ## will return an empty array of mode
                 ## 'logical'
@@ -334,7 +322,7 @@ read_ts_tables <- function(file, dir, t.type = "guess",
                 results <- results[ii, , drop = FALSE]
             }
         }
-        
+
         rm <- rowSums(is.na(results)) == dim(results)[[2L]]
         results <- results[!rm, , drop = FALSE]
         timestamp <- timestamp[!rm]
@@ -347,16 +335,6 @@ read_ts_tables <- function(file, dir, t.type = "guess",
             colnames[[i]] <- gsub("%file%",   .file[[i]],    colnames[[i]])
             colnames[[i]] <- gsub("%column%", .columns[[i]], colnames[[i]])
         }
-
-    } else if (backend == "monetdb") {
-           ### ********************
-
-        if (!inherits(dir, "MonetDBEmbeddedConnection")) {
-            dir <- DBI::dbConnect(MonetDBLite::MonetDBLite(), dir)
-            on.exit(DBI::dbDisconnect(dir, shutdown = TRUE))
-        }
-
-        DBI::dbGetQuery(dir, "SELECT * FROM file;")
 
     } else
         stop("unknown backend")

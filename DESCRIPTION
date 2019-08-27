@@ -1,13 +1,13 @@
 Package: tsdb
 Type: Package
 Title: Terribly-Simple Data Base for Time Series
-Version: 0.6-4
-Date: 2019-08-15
+Version: 0.7-0
+Date: 2019-08-27
 Maintainer: Enrico Schumann <es@enricoschumann.net>
 Authors@R: person(given = "Enrico", family = "Schumann",
                   role = c("aut", "cre"),
-		  email = "es@enricoschumann.net",
-		  comment = c(ORCID = "0000-0001-7601-6576"))
+                  email = "es@enricoschumann.net",
+                  comment = c(ORCID = "0000-0001-7601-6576"))
 Description: A terribly-simple data base for numeric
   time series, written purely in R, so no external
   database-software is needed. Series are stored in
@@ -23,7 +23,7 @@ Description: A terribly-simple data base for numeric
   'zoo' series).
 License: GPL-3
 Imports: datetimeutils, fastmatch, utils, zoo
-Suggests: DBI, MonetDBLite, RUnit, data.table, tinytest
+Suggests: data.table, tinytest
 URL: http://enricoschumann.net/R/packages/tsdb,
      https://github.com/enricoschumann/tsdb,
      https://gitlab.com/enricoschumann/tsdb

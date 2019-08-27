@@ -1,3 +1,10 @@
+2019-08-27  Enrico Schumann  <es@enricoschumann.net>
+
+        * DESCRIPTION (Version): 0.7-0
+
+        * DESCRIPTION (Suggests): remove support for
+        MonetDBLite; switch from RUnit to tinytest
+
 2019-08-15  Enrico Schumann  <es@enricoschumann.net>
 
         * R/functions.R (read_ts_tables): the default
