@@ -22,19 +22,39 @@ read_ts_tables(file, dir, t.type = "guess",
 \arguments{
   \item{file}{
     character
-}
+  }
   \item{dir}{
     character
-}
+  }
   \item{t.type}{
     character: \code{guess}, \code{Date} or \code{POSIXct}
-}
+  }
   \item{start}{
-    a timestamp
-}
+
+    a timestamp: either of classes \code{\link{Date}}
+    or \code{\link{POSIXct}} (possibly including
+    timezone information), or a character
+    string. Strings are passed to
+    \code{\link{as.Date}}/\code{\link{as.POSIXct}}.
+    Note in particular that a string of the form
+    \code{"YYYY-MM-DD HH:MM:SS"}, when passed to
+    \code{\link{as.POSIXct}}, will be interpreted as a
+    datetime in the current timezone.
+
+  }
   \item{end}{
-    a timestamp
-}
+
+    a timestamp: either of classes \code{\link{Date}}
+    or \code{\link{POSIXct}} (possibly including
+    timezone information), or a character
+    string. Strings are passed to
+    \code{\link{as.Date}}/\code{\link{as.POSIXct}}.
+    Note in particular that a string of the form
+    \code{"YYYY-MM-DD HH:MM:SS"}, when passed to
+    \code{\link{as.POSIXct}}, will be interpreted as a
+    datetime in the current timezone.
+
+  }
   \item{columns}{
     character.
 }
@@ -72,10 +92,10 @@ read_ts_tables(file, dir, t.type = "guess",
 
 }
 \item{timestamp}{
-  
+
   a vector of timestamps: if specified, only data at
   the times in \code{timestamp} are selected
-  
+
 }
 }
 \details{

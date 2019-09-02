@@ -1,3 +1,10 @@
+2019-08-28  Enrico Schumann  <es@enricoschumann.net>
+
+        * DESCRIPTION (Version): 0.7-1
+
+        * inst/tinytest/test_tsdb.R: remove tests that
+        rely on local timezone
+
 2019-08-27  Enrico Schumann  <es@enricoschumann.net>
 
         * DESCRIPTION (Version): 0.7-0

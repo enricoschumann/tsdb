@@ -1,3 +1,7 @@
+v0.7-1  (2019-08-28)
+
+  o CRAN release; no user-visible changes
+
 v0.7-0  (2019-08-27)
 
   o 'read_ts_tables': fixed -- when 'end' was missing,

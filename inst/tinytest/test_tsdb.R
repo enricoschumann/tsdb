@@ -243,18 +243,6 @@ expect_equal(z12$data,
 expect_equal(z12$timestamp,
              as.POSIXct("2016-1-1 10:00:00", tz = "UTC")+0:5)
 
-z12 <- read_ts_tables(c("X1", "X2"), dir, columns = "close",
-                      start = "2016-1-1 11:00:00",
-                      end   = "2016-1-1 11:00:20")
-
-expect_equal(z12$data,
-             structure(c(11, 12, 13, 14, 15, NA,
-                         NA, 1, 2, 3, 4, 5),
-                       .Dim = c(6L, 2L)))
-
-expect_equal(z12$timestamp,
-             as.POSIXct("2016-1-1 10:00:00", tz = "UTC")+0:5)
-
 
 
 
