@@ -41,6 +41,10 @@ read_ts_tables(file, dir, t.type = "guess",
     \code{\link{as.POSIXct}}, will be interpreted as a
     datetime in the current timezone.
 
+    It is best to always specify \code{start}: if
+    \code{start} is missing, the function will use the
+    first timestamp of the first time-series it reads.
+    
   }
   \item{end}{
 
@@ -53,6 +57,11 @@ read_ts_tables(file, dir, t.type = "guess",
     \code{"YYYY-MM-DD HH:MM:SS"}, when passed to
     \code{\link{as.POSIXct}}, will be interpreted as a
     datetime in the current timezone.
+
+    It is best to always specify \code{end}: if
+    \code{end} is missing, the function will use the
+    current time (which may not be appropriate: for
+    instance, when forecasts are stored).
 
   }
   \item{columns}{
