@@ -1,4 +1,4 @@
-#+TITLE: tsdb: A terribly-simple data base for time series
+#+TITLE: tsdb: a terribly-simple database for time series
 #+AUTHOR: Enrico Schumann
 #+OPTIONS: toc:nil
 #+BIND: org-latex-default-packages-alist nil
@@ -20,7 +20,7 @@
 #+LATEX_HEADER: \usepackage[backend=bibtex,citestyle=authoryear]{biblatex}
 #+LATEX_HEADER: \addbibresource{Library.bib}
 #+LATEX_HEADER: \usepackage[left=3cm,right=5cm,top=2cm,bottom=4cm,twoside]{geometry}
-#+LATEX_HEADER: \usepackage[libertine]{newtxmath} 
+#+LATEX_HEADER: \usepackage[libertine]{newtxmath}
 #+LATEX_HEADER: \usepackage{fontspec}
 #+LATEX_HEADER: \setmainfont{Linux Libertine O}
 #+LATEX_HEADER: \setmonofont[Scale=0.91]{inconsolata}
@@ -61,7 +61,7 @@
 #+HTML_HEAD:    border: 1px solid #eeeeee;
 #+HTML_HEAD:    border-radius: 3px;
 #+HTML_HEAD:    color: #222222; width: 100%;
-#+HTML_HEAD:    width: 700px; 
+#+HTML_HEAD:    width: 700px;
 #+HTML_HEAD:    padding-top: 2ex;
 #+HTML_HEAD:    padding: 1em;
 #+HTML_HEAD:    margin: 0.5em;
@@ -114,10 +114,19 @@
 
 * About tsdb
 
-A terribly-simple data base for numeric time
-series. Series are stored in CSV format. The package
-offers utilities for saving series in a standardised
-format, and for retrieving and joining data.
+A terribly-simple database for numeric time series,
+written purely in R, so no external database-software
+is needed. Series are stored in plain-text files (the
+most-portable and enduring file type) in CSV
+format. Timestamps are encoded using R's native numeric
+representation for 'Date'/'POSIXct', which makes them
+fast to parse, but keeps them accessible with other
+software. The package provides tools for saving and
+updating series in this standardised format, for
+retrieving and joining data, for summarising files and
+directories, and for coercing series from and to other
+data types (such as 'zoo' series).
+
 
 ** Good things about tsdb
 
@@ -140,7 +149,7 @@ format, and for retrieving and joining data.
 
 * Using tsdb
 
-** Writing data                                                    
+** Writing data
 
 We first load the package.
 
@@ -181,11 +190,11 @@ To store the data to a file, use =write_ts_table=. The
 function will take a directory and file name as
 arguments, which mimics the hierarchy of databases and
 tables in a classical database.
-#+BEGIN_SRC R :session *R* :results none :exports code 
+#+BEGIN_SRC R :session *R* :results none :exports code
   write_ts_table(ts, dir = "~/tsdb/daily", file = "example1")
 #+END_SRC
 
-The written file will look like this: 
+The written file will look like this:
 # +INCLUDE: ~/tsdb/daily/example1 example
 
 #+BEGIN_EXAMPLE
@@ -240,7 +249,7 @@ will override the column names of the data. In fact,
 this is the preferred way, since it makes things more
 explicit (which usually means safer).
 #+BEGIN_SRC R :session *R* :results output :exports both
-  ts <- ts_table(x, timestamp = as.Date("2016-1-1")+0:9, 
+  ts <- ts_table(x, timestamp = as.Date("2016-1-1")+0:9,
 		 columns = c("B", "A"))
   ts
 #+END_SRC
@@ -249,7 +258,7 @@ explicit (which usually means safer).
 : 10 rows [2016-01-01 -> 2016-01-10]: B, A
 
 We write the data to a file =example2=.
-#+BEGIN_SRC R :session *R* :results none :exports code 
+#+BEGIN_SRC R :session *R* :results none :exports code
   write_ts_table(ts, dir = "~/tsdb/daily", file = "example2")
 #+END_SRC
 
@@ -271,7 +280,7 @@ The written file looks like this:
 #+END_EXAMPLE
 
 
-** Reading data                                              
+** TODO Reading data
 
 Use the function =read_ts_tables=.
 
@@ -285,13 +294,15 @@ The default return value is a list with components
 #+RESULTS: read1
 #+begin_example
 $data
-     [,1]
-[1,]    1
-[2,]    4
-[3,]    5
+     A
+[1,] 1
+[2,] 2
+[3,] 3
+[4,] 4
+[5,] 5
 
 $timestamp
-[1] "2016-01-01" "2016-01-04" "2016-01-05"
+[1] "2016-01-01" "2016-01-02" "2016-01-03" "2016-01-04" "2016-01-05"
 
 $columns
 [1] "A"
@@ -307,9 +318,11 @@ More convenient may be to specify a =return.class=.
 		 return.class = "zoo")
 #+END_SRC
 
-#+RESULTS:
+#+RESULTS: 
 :            ~/tsdb/daily/example1::A
 : 2016-01-01                        1
+: 2016-01-02                        2
+: 2016-01-03                        3
 : 2016-01-04                        4
 : 2016-01-05                        5
 
@@ -318,18 +331,22 @@ More convenient may be to specify a =return.class=.
 		 return.class = "data.frame")
 #+END_SRC
 
-#+RESULTS:
+#+RESULTS: 
 :    timestamp ~/tsdb/daily/example1::A
 : 1 2016-01-01                        1
-: 2 2016-01-04                        4
-: 3 2016-01-05                        5
+: 2 2016-01-02                        2
+: 3 2016-01-03                        3
+: 4 2016-01-04                        4
+: 5 2016-01-05                        5
 
 
-But wait. We provided and wrote to the file values for
-1 January to 5 January. But we only got values for 1, 4
-and 5 January. The reason is that =tsdb= was written
-with financial data in mind, and on weekends there are
-no prices.
+With =tsdb= before version 0.7, =read_ts_tables= would
+per default only have returned values for non-weekend
+days.  (=tsdb= was written with financial data in mind,
+and on weekends there are no prices.) This behaviour is
+controlled by argument =drop.weekends=, which defaults
+to =FALSE=.
+
 #+BEGIN_SRC R :session *R* :results output :exports both
 weekdays(as.Date("2016-1-1")+0:4)
 #+END_SRC
@@ -344,16 +361,14 @@ argument =drop.weekends=.
   read_ts_tables("example1", dir = "~/tsdb/daily",
 		 columns = "A",
 		 return.class = "data.frame",
-		 drop.weekends = FALSE)
+		 drop.weekends = TRUE)
 #+END_SRC
 
-#+RESULTS:
+#+RESULTS:  
 :    timestamp ~/tsdb/daily/example1::A
 : 1 2016-01-01                        1
-: 2 2016-01-02                        2
-: 3 2016-01-03                        3
-: 4 2016-01-04                        4
-: 5 2016-01-05                        5
+: 2 2016-01-04                        4
+: 3 2016-01-05                        5
 
 
 You may have noticed a small difference in the names of
@@ -364,8 +379,7 @@ a single table, but we read tables.
   read_ts_tables(c("example1", "example2"),
 		 dir = "~/tsdb/daily",
 		 columns = "A",
-		 return.class = "data.frame",
-		 drop.weekends = FALSE)
+		 return.class = "data.frame")
 #+END_SRC
 
 #+RESULTS:
@@ -393,7 +407,6 @@ specifies the format; its default is
 		 dir = "~/tsdb/daily",
 		 columns = "A",
 		 return.class = "data.frame",
-		 drop.weekends = FALSE, 
                  column.name = "%file%/%column%")
 #+END_SRC
 
@@ -420,7 +433,6 @@ even for missing columns, with a warning though.
 		 dir = "~/tsdb/daily",
 		 columns = c("A", "B"),
 		 return.class = "data.frame",
-		 drop.weekends = FALSE, 
                  column.name = "%file%/%column%")
 #+END_SRC
 
@@ -448,13 +460,13 @@ In read_ts_tables(c("example1", "example2"), dir = "~/tsdb/daily",  :
 
 ** ts_tables
 
-   tsdb works with /time-series tables/
-   (objects of class =ts_table=). A =ts_table= is a 
-   numeric matrix, so there
-   is always a =dim= attribute. For a time-series table
-   =x=, you get the number of observations with =dim(x)[1L]=.
+tsdb works with /time-series tables/ (objects of
+class =ts_table=). A =ts_table= is a numeric matrix,
+so there is always a =dim= attribute. For a
+time-series table =x=, you get the number of
+observations with =dim(x)[1L]=.
 
-   Attached to this matrix are several attributes:
+Attached to this matrix are several attributes:
 
 - timestamp :: a vector: the numeric representation of
                the timestamp
@@ -468,20 +480,24 @@ are always present.
 
 A =ts_table= is not meant as a time-series class. For
 most computations (plotting, calculation of statistics,
-etc), the =ts_table= must first be coerced to =zoo=, =xts=,
-a data-frame or a similar data structure. Methods that
-perform such coercions are responsible for converting
-the numeric timestamp vector to an actual
-timestamp. For this, they may use the function
-=ttime=, whose pronounciation may remind you of a hot
-beverage, but which really stands for =translate time=.
+etc), the =ts_table= must first be coerced to =zoo=,
+=xts=, a data-frame or a similar data
+structure. Methods that perform such coercions are
+responsible for converting the numeric timestamp vector
+to an actual timestamp. For this, they may use the
+function =ttime=, whose pronounciation may remind you
+of a hot beverage, but whose name really stands for
+=translate time=.
 
 
 ** The file format
+  :PROPERTIES:
+  :CUSTOM_ID: file-format
+  :END:
 
-   =tsdb= can store and load time-series data. The format
-   it uses is plain CSV. A sample file may look as
-   follows:
+=tsdb= can store and load time-series data. The format
+it uses is plain CSV. A sample file may look as
+follows:
 
 #+BEGIN_EXAMPLE
   "timestamp","close"
@@ -492,13 +508,13 @@ beverage, but which really stands for =translate time=.
   17135,15
 #+END_EXAMPLE
 
-   Thus, the file has a header line that gives the
-   names of the columns, with the first column always
-   being named =timestamp=.
+Thus, the file has a header line that gives the
+names of the columns, with the first column always
+being named =timestamp=.
 
-   The advantage of this plain format is that the data
-   are in no way dependent on =tsdb=. The files can be
-   used and manipulated by other software as well.
+The advantage of this plain format is that the data
+are in no way dependent on =tsdb=. The files can be
+used and manipulated by other software as well.
 
 
 ** Timestamps

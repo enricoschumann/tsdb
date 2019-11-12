@@ -326,6 +326,13 @@ read_ts_tables <- function(file, dir, t.type = "guess",
         rm <- rowSums(is.na(results)) == dim(results)[[2L]]
         results <- results[!rm, , drop = FALSE]
         timestamp <- timestamp[!rm]
+
+        if (drop.weekends && !do.match) {
+            ii <- is_businessday(ttime(timestamp, from = "numeric", t.type))
+            results <- results[ii, , drop = FALSE]
+            timestamp <- timestamp[ii]
+        }
+
         colnames <- rep.int(column.names, dim(results)[[2L]])
         .dir <- rep(dir, each = length(columns))
         .file <- rep(file, each = length(columns))
@@ -338,6 +345,7 @@ read_ts_tables <- function(file, dir, t.type = "guess",
 
     } else
         stop("unknown backend")
+
 
     if (is.null(return.class)) {
         list(data = results,
