@@ -1,6 +1,6 @@
 ## The package uses code from Enrico Schumann's
 ## R package 'database'.
-## Copyright (C) Enrico Schumann 2010-2019
+## Copyright (C) Enrico Schumann 2010-2020
 
 ## ---------------- time
 
@@ -332,8 +332,10 @@ read_ts_tables <- function(file, dir, t.type = "guess",
             results <- results[ii, , drop = FALSE]
             timestamp <- timestamp[ii]
         }
-
-        colnames <- rep.int(column.names, dim(results)[[2L]])
+        colnames <- if (length(column.names) == 1L)
+                        rep.int(column.names, dim(results)[[2L]])
+                    else
+                        column.names
         .dir <- rep(dir, each = length(columns))
         .file <- rep(file, each = length(columns))
         .columns <- rep(columns, length(.dir)/length(columns))

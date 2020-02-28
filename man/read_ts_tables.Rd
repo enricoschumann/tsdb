@@ -44,7 +44,7 @@ read_ts_tables(file, dir, t.type = "guess",
     It is best to always specify \code{start}: if
     \code{start} is missing, the function will use the
     first timestamp of the first time-series it reads.
-    
+
   }
   \item{end}{
 
@@ -80,7 +80,9 @@ read_ts_tables(file, dir, t.type = "guess",
 \item{column.names}{
 
   character: a format string for column names; may contain
-  \code{\%dir\%}, \code{\%file\%}, and \code{\%column\%}
+  \code{\%dir\%}, \code{\%file\%}, and \code{\%column\%}.
+  It is only used when \code{return.class} is \code{data.frame}
+  or \code{zoo}.
 
 }
 \item{backend}{
