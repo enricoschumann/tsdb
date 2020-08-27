@@ -240,8 +240,8 @@ expect_equal(z12$data,
                          NA, 1, 2, 3, 4, 5),
                        .Dim = c(6L, 2L)))
 
-expect_equal(z12$timestamp,
-             as.POSIXct("2016-1-1 10:00:00", tz = "UTC")+0:5)
+expect_equivalent(unclass(z12$timestamp),
+                  c(unclass(as.POSIXct("2016-1-1 10:00:00", tz = "UTC")+0:5)))
 
 
 
@@ -265,8 +265,8 @@ ans <- read_ts_tables("P", dir = dir,
                       timestamp = as.POSIXct("2019-1-1 10:00:00",
                                              tz = "UTC") + 0.3)
 expect_equivalent(c(ans$data), 3)
-expect_equivalent(ans$timestamp,
-                  as.POSIXct("2019-1-1 10:00:00", tz = "UTC") + 0.3)
+expect_equivalent(c(unclass(ans$timestamp)),
+                  c(unclass(as.POSIXct("2019-1-1 10:00:00", tz = "UTC") + 0.3)))
 
 
 

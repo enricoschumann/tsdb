@@ -1,8 +1,8 @@
 Package: tsdb
 Type: Package
 Title: Terribly-Simple Data Base for Time Series
-Version: 0.7-3
-Date: 2020-02-28
+Version: 0.7-4
+Date: 2020-08-26
 Maintainer: Enrico Schumann <es@enricoschumann.net>
 Authors@R: person(given = "Enrico", family = "Schumann",
                   role = c("aut", "cre"),
@@ -24,6 +24,6 @@ Description: A terribly-simple data base for numeric
 License: GPL-3
 Imports: datetimeutils, fastmatch, utils, zoo
 Suggests: data.table, tinytest
-URL: http://enricoschumann.net/R/packages/tsdb,
+URL: http://enricoschumann.net/R/packages/tsdb/,
      https://github.com/enricoschumann/tsdb,
      https://gitlab.com/enricoschumann/tsdb

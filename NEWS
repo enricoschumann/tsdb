@@ -1,6 +1,12 @@
-v0.7-3  (2020-XX-XX; not yet released)
+v0.7-4  (2020-08-26)
 
-  o ....
+  o CRAN release; no user-visible changes
+
+v0.7-3  (2020-08-25)
+
+  o 'read_ts_tables': fixed -- when 'column.names' did
+    not contain a placeholder such as %file%, it would
+    be ignored or lead to an error
 
 v0.7-2  (2019-11-12)
 

@@ -1,3 +1,17 @@
+2020-08-26  Enrico Schumann  <es@enricoschumann.net>
+
+        * DESCRIPTION (Version): 0.7-4
+
+        * inst/tinytest/test_tsdb.R: fix unit tests to
+        comply with change in R-devel (r79079)
+
+2020-08-25  Enrico Schumann  <es@enricoschumann.net>
+
+        * DESCRIPTION (Version): 0.7-3
+
+        * inst/tinytest/test_tsdb.R: ignore timezone in
+        tests
+
 2020-02-28  Enrico Schumann  <es@enricoschumann.net>
 
         * R/functions.R (read_ts_tables): fixed -- when
