@@ -583,3 +583,22 @@ ans <- read_ts_tables(c("x", "y"),
                       column.names = c("a", "b"),
                       return.class = "zoo")
 expect_equal(colnames(ans), c("a", "b"))
+
+## ----------------
+
+## column name (single)
+x <- ts_table(data = 1:5,
+              timestamp = as.Date("2016-1-1") + 1:5,
+              columns = "A")
+write_ts_table(x, dir, "x", replace.file = TRUE)
+ans <- read_ts_tables("x",
+                      dir = dir,
+                      column.names = "A",
+                      return.class = "zoo")
+expect_equal(colnames(ans), "A")
+
+ans <- read_ts_tables("x",
+                      dir = dir,
+                      column.names = "%file%",
+                      return.class = "zoo")
+expect_equal(colnames(ans), "x")
