@@ -16,10 +16,10 @@ ttime(x, from = "datetime", to = "numeric", tz = "",
     numeric
 }
   \item{from}{
-    character
+    character: \code{datetime}, \code{numeric} or \code{character}
 }
   \item{to}{
-    character
+    character: \code{numeric}, \code{Date} or \code{POSIXct}
 }
   \item{tz}{
     character

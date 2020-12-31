@@ -7,7 +7,7 @@
 
   Provides information about data stored in file:
   columns, number of observations, range of timestamps.
-   
+
 }
 \usage{
 file_info(dir, file)
@@ -32,14 +32,14 @@ file_info(dir, file)
   a value of \code{\link{NA}} for \code{min.timestamp}
   would occur for a non-existing file, but also if the
   file could not be read for some reason.
-  
+
 }
 \value{
 
   An object of type \code{file_info}, which is a
   \code{data.frame} with information such as whether a
   file exists, minimum and maximum timestamp, and more.
-  
+
 }
 \author{
   Enrico Schumann
