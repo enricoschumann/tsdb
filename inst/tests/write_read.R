@@ -24,7 +24,7 @@ message("  ", nf, " files of length ", nd, "\n")
 
 message(f("write files (from zoo)"), appendLF = FALSE)
 t <- system.time(
-    for (i in 1:trials ) {
+    for (j in 1:trials ) {
         for (i in 1:nf) {
             z <- z0 + i/10000
             write_ts_table(as.ts_table(z, columns = "A"),
