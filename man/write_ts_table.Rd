@@ -39,12 +39,9 @@ write_ts_table(ts, dir, file, add = FALSE, overwrite = FALSE,
     and replaced by a new file (i.e. containing \code{ts})
 
   }
-  \item{backend}{
 
-    character: currently, \code{csv} and \code{monetdb}
-    are supported
-
-  }
+  \item{backend}{a string; currently, only \code{csv}
+  is supported}
 
 }
 \details{
