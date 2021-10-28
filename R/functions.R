@@ -1,6 +1,6 @@
 ## The package uses code from Enrico Schumann's
 ## R package 'database'.
-## Copyright (C) Enrico Schumann 2010-2020
+## Copyright (C) Enrico Schumann 2010-2021
 
 ## ---------------- time
 
@@ -219,7 +219,8 @@ read_ts_tables <- function(file, dir, t.type = "guess",
             columns <- tmp[-1L]
         }
 
-        do.match <- length(dfile) > 1L || !missing(timestamp)
+        do.match <- (length(dfile) > 1L || !missing(timestamp)) &&
+                    !is.na(frequency)
         if (t.type == "Date") {
             start <- if (missing(start) && length(timestamp1))
                          ttime(timestamp1, "numeric", "Date")
@@ -278,6 +279,9 @@ read_ts_tables <- function(file, dir, t.type = "guess",
             results <- array(NA_real_,
                              dim = c(length(timestamp),
                                      length(dfile)*nc))
+        else if (length(dfile) > 1L)
+            tmp.results <- list(data = as.list(rep(NA_real_, length(dfile))),
+                                timestamp = as.list(rep(NA_real_, length(dfile))))
         for (i in seq_along(dfile)) {
             if (is.null(read.fn))
                 tmp <- read.table(dfile[[i]],
@@ -320,7 +324,28 @@ read_ts_tables <- function(file, dir, t.type = "guess",
                 ii <- timestamp >= start & timestamp <= end
                 timestamp <- timestamp[ii]
                 results <- results[ii, , drop = FALSE]
+
+                if (length(dfile) > 1L) {
+                    ## more than one file ==> first
+                    ## collect all data/timestamps
+                    tmp.results$data[[i]] <- results
+                    tmp.results$timestamp[[i]] <- timestamp
+                }
             }
+        }
+
+        if (!do.match && length(dfile) > 1L) {
+            timestamp <- sort(unique(unlist(tmp.results$timestamp)))
+            results <- array(NA_real_,
+                             dim = c(length(timestamp),
+                                     length(dfile)*nc))
+            for (i in seq_along(dfile)) {
+                ii <- fmatch(tmp.results$timestamp[[i]], timestamp, nomatch = 0L)
+                res <- tmp.results$data[[i]][, columns, drop = FALSE][ii > 0L, , drop = FALSE]
+                if (!is.null(res))
+                    results[ii, (nc*(i-1)+1):(nc*i)] <- as.matrix(res)
+            }
+
         }
 
         rm <- rowSums(is.na(results)) == dim(results)[[2L]]

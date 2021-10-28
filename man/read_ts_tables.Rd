@@ -98,8 +98,14 @@ read_ts_tables(file, dir, t.type = "guess",
 }
 \item{frequency}{
 
-  character: only used when \code{t.type} is
-  \code{POSIXct} (or guessed to be \code{POSIXct})
+  character; used compute a regular grid between
+  \code{start} and \code{end}. The argument is only
+  used when \code{t.type} is \code{POSIXct}
+  (or guessed to be \code{POSIXct}) and no
+  \code{timestamp} is specified.
+  If set to \code{\link{NA}}, the function will first
+  read all files and compute \code{timestamp} as the
+  union of all files' timestamps.
 
 }
 \item{timestamp}{

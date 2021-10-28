@@ -1,6 +1,13 @@
-v1.0-1  (2021-??-??; not yet released)
+v1.1-0  (2021-??-??; not yet released)
+
+  o 'read_ts_tables': argument "frequency" can now be
+    NA, in which case the function will first gather
+    possible timestamps from the files to be read.
+    Useful for irregular time-series.
 
   o minor documentation updates
+
+  o ....
 
 v1.0-0  (2020-12-31)
 
