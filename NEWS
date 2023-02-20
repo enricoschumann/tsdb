@@ -1,4 +1,4 @@
-v1.1-0  (2021-??-??; not yet released)
+v1.1-0  (2023-02-20)
 
   o 'read_ts_tables': argument "frequency" can now be
     NA, in which case the function will first gather
@@ -6,8 +6,6 @@ v1.1-0  (2021-??-??; not yet released)
     Useful for irregular time-series.
 
   o minor documentation updates
-
-  o ....
 
 v1.0-0  (2020-12-31)
 

@@ -20,17 +20,16 @@ read_ts_tables(file, dir, t.type = "guess",
                timestamp)
 }
 \arguments{
-  \item{file}{
+  \item{file}{%
     character
   }
-  \item{dir}{
+  \item{dir}{%
     character
   }
-  \item{t.type}{
+  \item{t.type}{%
     character: \code{guess}, \code{Date} or \code{POSIXct}
   }
-  \item{start}{
-
+  \item{start}{%
     a timestamp: either of classes \code{\link{Date}}
     or \code{\link{POSIXct}} (possibly including
     timezone information), or a character
@@ -44,10 +43,8 @@ read_ts_tables(file, dir, t.type = "guess",
     It is best to always specify \code{start}: if
     \code{start} is missing, the function will use the
     first timestamp of the first time-series it reads.
-
   }
-  \item{end}{
-
+  \item{end}{%
     a timestamp: either of classes \code{\link{Date}}
     or \code{\link{POSIXct}} (possibly including
     timezone information), or a character
@@ -62,72 +59,61 @@ read_ts_tables(file, dir, t.type = "guess",
     \code{end} is missing, the function will use the
     current time (which may not be appropriate: for
     instance, when forecasts are stored).
-
   }
-  \item{columns}{
+  \item{columns}{%
     character.
+  }
+  \item{return.class}{%
+    \code{NULL} (default) or character: if \code{NULL}, a
+    list is returned. Also supported are \code{zoo},
+    \code{\link{data.frame}} and \code{\link{ts_table}}.
+  }
+  \item{drop.weekends}{%
+    logical
+  }
+  \item{column.names}{%
+    character: a format string for column names; may
+    contain \code{\%dir\%}, \code{\%file\%}, and
+    \code{\%column\%}.  It is only used when
+    \code{return.class} is \code{data.frame} or \code{zoo}.
+  }
+  \item{backend}{%
+    character: currently, only \sQuote{\code{csv}} is
+    fully supported
+  }
+  \item{read.fn}{%
+    \code{NULL} or character: use \sQuote{\code{fread}}
+    to use \code{\link[data.table]{fread}}
+    from package \pkg{data.table}
+  }
+  \item{frequency}{%
+    character; used compute a regular grid between
+    \code{start} and \code{end}. The argument is only
+    used when \code{t.type} is \code{POSIXct}
+    (or guessed to be \code{POSIXct}) and no
+    \code{timestamp} is specified.
+    If set to \code{\link{NA}}, the function will first
+    read all files and compute \code{timestamp} as the
+    union of all files' timestamps.
+  }
+  \item{timestamp}{%
+    a vector of timestamps: if specified, only data at
+    the times in \code{timestamp} are selected
+  }
 }
-\item{return.class}{
-
-  \code{NULL} (default) or character: if \code{NULL}, a list is
-  returned. Also supported are \code{zoo},
-  \code{\link{data.frame}} and \code{\link{ts_table}}.
-
-}
-\item{drop.weekends}{
-  logical
-}
-\item{column.names}{
-
-  character: a format string for column names; may contain
-  \code{\%dir\%}, \code{\%file\%}, and \code{\%column\%}.
-  It is only used when \code{return.class} is \code{data.frame}
-  or \code{zoo}.
-
-}
-\item{backend}{
-
-  character: currently, only \sQuote{\code{csv}} is
-  fully supported
-
-}
-\item{read.fn}{
-  \code{NULL} or character: use \sQuote{\code{fread}}
-  to use \code{\link[data.table]{fread}}
-  from package \pkg{data.table}
-}
-\item{frequency}{
-
-  character; used compute a regular grid between
-  \code{start} and \code{end}. The argument is only
-  used when \code{t.type} is \code{POSIXct}
-  (or guessed to be \code{POSIXct}) and no
-  \code{timestamp} is specified.
-  If set to \code{\link{NA}}, the function will first
-  read all files and compute \code{timestamp} as the
-  union of all files' timestamps.
-
-}
-\item{timestamp}{
-
-  a vector of timestamps: if specified, only data at
-  the times in \code{timestamp} are selected
-
-}
-}
-\details{
+\details{%
 
   Read time-series data from \acronym{CSV} files.
 
 }
 \value{
-  When return.class is \code{NULL}, a list:
+  When \code{return.class} is \code{NULL}, a list:
  \item{data}{a numeric matrix}
  \item{timestamp}{Date or POSIXct}
  \item{columns}{character}
  \item{file.path}{character}
-
-
+ Otherwise an object of class as specified by argument
+ \code{return.class}.
 }
 \author{
   Enrico Schumann

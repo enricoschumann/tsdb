@@ -165,7 +165,7 @@ Start by creating time-series data.
 #+END_SRC
 
 #+RESULTS:
-: 2016-01-01 2016-01-02 2016-01-03 2016-01-04 2016-01-05 
+: 2016-01-01 2016-01-02 2016-01-03 2016-01-04 2016-01-05
 :          1          2          3          4          5
 
 
@@ -318,7 +318,7 @@ More convenient may be to specify a =return.class=.
 		 return.class = "zoo")
 #+END_SRC
 
-#+RESULTS: 
+#+RESULTS:
 :            ~/tsdb/daily/example1::A
 : 2016-01-01                        1
 : 2016-01-02                        2
@@ -331,7 +331,7 @@ More convenient may be to specify a =return.class=.
 		 return.class = "data.frame")
 #+END_SRC
 
-#+RESULTS: 
+#+RESULTS:
 :    timestamp ~/tsdb/daily/example1::A
 : 1 2016-01-01                        1
 : 2 2016-01-02                        2
@@ -364,7 +364,7 @@ argument =drop.weekends=.
 		 drop.weekends = TRUE)
 #+END_SRC
 
-#+RESULTS:  
+#+RESULTS:
 :    timestamp ~/tsdb/daily/example1::A
 : 1 2016-01-01                        1
 : 2 2016-01-04                        4
