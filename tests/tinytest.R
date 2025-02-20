@@ -1,3 +1,4 @@
-if (requireNamespace("tinytest", quietly = TRUE)) {
-    tinytest::test_package("tsdb")
-}
+if (requireNamespace("tinytest", quietly = TRUE))
+    tinytest.results <- tinytest::test_package("tsdb",
+                                               color = interactive(),
+                                               verbose = 1)
