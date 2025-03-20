@@ -1,3 +1,11 @@
+v1.2-0  (2025-03-06; under development)
+
+  o 'read_ts_tables': new argument "na.rm", that
+    determines whether NAs are removed when more than
+    one series is fetched
+
+  o ....
+
 v1.1-0  (2023-02-20)
 
   o 'read_ts_tables': argument "frequency" can now be

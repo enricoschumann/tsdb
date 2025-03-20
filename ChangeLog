@@ -1,3 +1,10 @@
+2025-03-06  Enrico Schumann  <es@enricoschumann.net>
+
+	* R/functions.R (read_ts_tables): new argument
+	"na.rm"; if NULL, which matches the current
+	behaviour, observations with no finite values at
+	all are removed
+
 2023-02-20  Enrico Schumann  <es@enricoschumann.net>
 
 	* DESCRIPTION (Version): 1.1-0
